@@ -1,3 +1,21 @@
+import numpy as np
+
+def parse_csv(file_path: str) -> np.array:
+    with open(file_path, encoding='utf-16') as f:
+        lines = f.readlines()
+    
+    
+    data = np.genfromtxt([
+        line.replace(',', '')
+        for line in lines[1:]
+    ])
+    
+    
+    # returns data as a np array
+    # rows as a list
+    # columns as a list
+    return data, data[1:,0], lines[0].strip().split(',')
+
 def Mean_average_error(Y_true: dict, Y_pred: dict) -> float:
     """
     formula from: https://en.wikipedia.org/wiki/Mean_absolute_error

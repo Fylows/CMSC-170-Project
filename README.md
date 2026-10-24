@@ -26,7 +26,14 @@ main.py # program entry way
 ```
 
 Installation instructions:
-...
+clone the repository and install the requirements
+
+```
+git clone https://github.com/Fylows/CMSC-170-Project.git
+cd CMSC-170-Project
+pip install --upgrade pip
+pip3 install -r requirements.txt
+```
 
 ---
 
