@@ -14,7 +14,7 @@ def parse_csv(file_path: str) -> np.array:
     # returns data as a np array
     # rows as a list
     # columns as a list
-    return data, data[1:,0], lines[0].strip().split(',')
+    return data, data[:, 0], lines[0].strip().split('\t')[1:]
 
 def Mean_average_error(Y_true: dict, Y_pred: dict) -> float:
     """

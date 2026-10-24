@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class LinearRegression(object):
     pass
 
@@ -15,21 +14,28 @@ class RidgeRegression(object):
         self.alpha = alpha
         self.iterations = iterations
         self.learning_rate = learning_rate
-    
+
     # training the model using gradient descent
     def fit(self, X, y):
-        self.m, self.n = X.shape
+        n, n_features = X.shape
+        n_targets = y.shape[1] # number of target variables 
         
+        # initialize weights and biases
+        self.weights = np.zeros((n_features, n_targets), dtype=float) # weights should match dimensions of features x targets
+        self.bias = np.zeros(n_targets, dtype=float) # bias for each target variable
+
         for _ in range(self.iterations):
             Y_pred = self.predict(X)
+            diff = y - Y_pred
             
-            # gradient calculation
-            dw = (-2 * (X.T).dot(y - Y_pred) + self.alpha * np.sign(self.weights)) / self.m
-            db = -2 * np.sum(y - Y_pred) / self.m
+            # gradients of weights and bias
+            dw = (-2 * X.T.dot(diff) + 2 * self.alpha * self.weights) / n
+            db = -2 * np.sum(diff, axis=0) / n
 
-            # weight update
+            # update weights and bias
             self.weights -= self.learning_rate * dw
             self.bias -= self.learning_rate * db
+        return self
 
     def predict(self, X):
         return X.dot(self.weights) + self.bias
