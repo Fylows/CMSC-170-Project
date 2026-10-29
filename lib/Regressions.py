@@ -1,7 +1,25 @@
 import numpy as np
 
+# References from
+# https://www.geeksforgeeks.org/machine-learning/ml-linear-regression/
 class LinearRegression(object):
-    pass
+    def __init__(self, iterations = 1000, learning_rate = 0.01):
+        self.iterations = iterations
+        self.learning_rate = learning_rate
+
+    def fit(self, X, y):
+        n, n_features = X.shape
+        n_targets = y.shape[1]
+
+        self.weights = np.zeros((n_features, n_targets), dtype = float)
+        self.bias = np.zeros(n_targets, dtype = float)
+
+        for _ in range(self.iterations):
+            Y_pred = self.predict(X)
+            diff = y - Y_pred
+
+    def predict(self, X):
+        return X.dot(self.weights) + self.bias
 
 class PolyNomialRegression(object):
     pass
