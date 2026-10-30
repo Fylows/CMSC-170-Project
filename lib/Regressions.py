@@ -1,22 +1,32 @@
 import numpy as np
 
-# References from
-# https://www.geeksforgeeks.org/machine-learning/ml-linear-regression/
+# Referenced from:
+#    https://www.geeksforgeeks.org/machine-learning/ml-linear-regression/
 class LinearRegression(object):
     def __init__(self, iterations = 1000, learning_rate = 0.01):
         self.iterations = iterations
         self.learning_rate = learning_rate
 
     def fit(self, X, y):
-        n, n_features = X.shape
-        n_targets = y.shape[1]
+        n, n_features = X.shape  # Get no. of years (n) and columns (n_features)
+        n_targets = y.shape[1]   # Get no. of fuel sources.
 
+        # Set up starting line.
         self.weights = np.zeros((n_features, n_targets), dtype = float)
         self.bias = np.zeros(n_targets, dtype = float)
 
+        # Loop for self.iterations times:
         for _ in range(self.iterations):
-            Y_pred = self.predict(X)
-            diff = y - Y_pred
+            Y_pred = self.predict(X)                 # Predict w/ current line.      
+            diff = y - Y_pred                        # Get error.
+
+            dw = (X.T.dot(diff) / n) * -2            # Get weight and bias gradients.
+            db = (np.sum(diff, axis = 0) / n) * -2
+
+            self.weights -= self.learning_rate * dw  # Update line.
+            self.bias -= self.learning_rate * db
+
+        return self
 
     def predict(self, X):
         return X.dot(self.weights) + self.bias

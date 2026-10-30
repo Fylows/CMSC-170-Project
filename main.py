@@ -2,6 +2,41 @@ from lib import utility
 from lib import Regressions
 import numpy as np
 
+# Linear Regression: ________________________________________________
+
+def Linear(X_train, Y_train, X_test, Y_test, fuel_sources):
+    mean = X_train.mean(axis = 0)                            # Get mean and standard dev. of training data.
+    std = X_train.std(axis = 0)                         
+    std[std == 0] = 1.0                                      # Prevent division by zero.
+
+    X_train_scaled = (X_train - mean) / std                  # Scale training and testing data for gradient descent convergence.
+    X_test_scaled = (X_test - mean) / std
+        
+    final = Regressions.LinearRegression()                   # Create model -> train on scaled training data -> predict.
+    final.fit(X_train_scaled, Y_train)                       
+    preds = final.predict(X_test_scaled)                     
+
+    # Get avg. error.
+    mae = utility.Mean_average_error(               
+        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
+        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+    )
+
+    # Get abs. pctg. error.
+    mape = utility.Mean_absolute_percentage_error(
+        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
+        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+    )
+
+    # Print predictions.
+    for pred in preds:
+        print(pred)
+
+    print(f"\nMean Average Error (MAE): {mae}")
+    print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+
+# Ridge Regression: _________________________________________________
+
 def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources):
     
     # get mean and std of training data, to scale both training and testing data
@@ -29,8 +64,11 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources):
 
     for pred in preds:
         print(pred)
-    print(f"Mean Average Error (MAE): {mae}")
+
+    print(f"\nMean Average Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+
+# main(): ___________________________________________________________
 
 def main():
     data, years, fuel_sources = utility.parse_csv("csv/Power Generation by Fuel Source.csv")
@@ -47,6 +85,10 @@ def main():
     Y_train = data[:split]
     Y_test  = data[split:]
 
+    print("Linear: ____________________________________________________\n")
+    Linear(X_train, Y_train, X_test, Y_test, fuel_sources)
+
+    print("\nRidge: _____________________________________________________\n")
     Ridge(X_train, Y_train, X_test, Y_test, fuel_sources)
 
 if __name__ == "__main__":
