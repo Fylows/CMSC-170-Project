@@ -1,5 +1,7 @@
 import numpy as np
 
+# Linear Regression: ________________________________________________
+
 # Referenced from:
 #    https://www.geeksforgeeks.org/machine-learning/ml-linear-regression/
 class LinearRegression(object):
@@ -31,8 +33,12 @@ class LinearRegression(object):
     def predict(self, X):
         return X.dot(self.weights) + self.bias
 
+# Polynomial Regression: ____________________________________________
+
 class PolyNomialRegression(object):
     pass
+
+# Ridge Regression: _________________________________________________
 
 # Referenced from
 # https://www.geeksforgeeks.org/machine-learning/implementation-of-ridge-regression-from-scratch-using-python/
@@ -67,6 +73,8 @@ class RidgeRegression(object):
 
     def predict(self, X):
         return X.dot(self.weights) + self.bias
+
+# ARIMA Regression: _________________________________________________
 
 class ARIMARegression(object):
     pass

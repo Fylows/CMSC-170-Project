@@ -4,17 +4,21 @@ import numpy as np
 
 # Linear Regression: ________________________________________________
 
-def Linear(X_train, Y_train, X_test, Y_test, fuel_sources):
-    mean = X_train.mean(axis = 0)                            # Get mean and standard dev. of training data.
+def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
+    mean = X_train.mean(axis = 0)                      # Get mean and standard dev. of training data.
     std = X_train.std(axis = 0)                         
-    std[std == 0] = 1.0                                      # Prevent division by zero.
+    std[std == 0] = 1.0                                # Prevent division by zero.
 
-    X_train_scaled = (X_train - mean) / std                  # Scale training and testing data for gradient descent convergence.
+    X_train_scaled = (X_train - mean) / std            # Scale training and testing data for gradient descent convergence.
     X_test_scaled = (X_test - mean) / std
+
+    future_years_scaled = (future_years - mean) / std  # Scale future years.
         
-    final = Regressions.LinearRegression()                   # Create model -> train on scaled training data -> predict.
+    final = Regressions.LinearRegression()             # Create model -> train on scaled training data -> predict.
     final.fit(X_train_scaled, Y_train)                       
-    preds = final.predict(X_test_scaled)                     
+    
+    preds = final.predict(X_test_scaled)    
+    future_preds = final.predict(future_years_scaled)                 
 
     # Get avg. error.
     mae = utility.Mean_average_error(               
@@ -34,6 +38,12 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources):
 
     print(f"\nMean Average Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+
+    for year, prediction in zip(future_years, future_preds):      # Iterate through years and predictions:
+        print(f"\n{year[0]}:")                                    #    Print predicted usage for each fuel source from 2021-2030.
+
+        for i in range(len(fuel_sources)):
+            print(f"{fuel_sources[i]:<20}{prediction[i]:,.2f}")
 
 # Ridge Regression: _________________________________________________
 
@@ -84,9 +94,10 @@ def main():
     X_test  = years[split:].reshape(-1, 1)
     Y_train = data[:split]
     Y_test  = data[split:]
+    future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)  # Create array of years to predict.
 
     print("Linear: ____________________________________________________\n")
-    Linear(X_train, Y_train, X_test, Y_test, fuel_sources)
+    Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
     print("\nRidge: _____________________________________________________\n")
     Ridge(X_train, Y_train, X_test, Y_test, fuel_sources)
