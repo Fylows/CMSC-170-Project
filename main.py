@@ -2,19 +2,28 @@ from lib import utility
 from lib import Regressions
 import numpy as np
 
+# Print Prediction Function: ________________________________________
+
+def PrintPrediction(years, preds, sources):           
+    for year, pred in zip(years, preds):              # Iterate through years and predictions:
+        print(f"\n{year[0]}:")                        #    Print predicted usage for each fuel source.
+
+        for i in range(len(sources)):
+            print(f"{sources[i]:<20}{pred[i]:,.2f}")
+
 # Linear Regression: ________________________________________________
 
 def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
-    mean = X_train.mean(axis = 0)                      # Get mean and standard dev. of training data.
+    mean = X_train.mean(axis = 0)                                           # Get mean and standard dev. of training data.
     std = X_train.std(axis = 0)                         
-    std[std == 0] = 1.0                                # Prevent division by zero.
+    std[std == 0] = 1.0                                                     # Prevent division by zero.
 
-    X_train_scaled = (X_train - mean) / std            # Scale training and testing data for gradient descent convergence.
+    X_train_scaled = (X_train - mean) / std                                 # Scale training and testing data for gradient descent convergence.
     X_test_scaled = (X_test - mean) / std
 
-    future_years_scaled = (future_years - mean) / std  # Scale future years.
+    future_years_scaled = (future_years - mean) / std                       # Scale future years.
         
-    final = Regressions.LinearRegression()             # Create model -> train on scaled training data -> predict.
+    final = Regressions.LinearRegression()                                  # Create model -> train on scaled training data -> predict.
     final.fit(X_train_scaled, Y_train)                       
     
     preds = final.predict(X_test_scaled)    
@@ -22,28 +31,47 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     # Get avg. error.
     mae = utility.Mean_average_error(               
-        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
+        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},  
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-    # Get abs. pctg. error.
+    # Get mean abs. pctg. error.
     mape = utility.Mean_absolute_percentage_error(
         {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-    # Print predictions.
+    # Print predictions for test years.
     for pred in preds:
         print(pred)
 
     print(f"\nMean Average Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
 
-    for year, prediction in zip(future_years, future_preds):      # Iterate through years and predictions:
-        print(f"\n{year[0]}:")                                    #    Print predicted usage for each fuel source from 2021-2030.
+    # Initial Model: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-        for i in range(len(fuel_sources)):
-            print(f"{fuel_sources[i]:<20}{prediction[i]:,.2f}")
+    # print("\nInitial: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    # PrintPrediction(future_years, future_preds, fuel_sources)
+
+    # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    X_all = np.concatenate((X_train, X_test))                      # Put data back together by concatenation.
+    Y_all = np.concatenate((Y_train, Y_test))
+
+    mean_all = X_all.mean(axis = 0)                                # Get mean and standard dev. of all data.
+    std_all = X_all.std(axis = 0)  
+    std_all[std_all == 0] = 1.0                                    # Prevent division by zero.
+
+    X_all_scaled = (X_all - mean_all) / std_all                    # Scale data and future years again.
+    future_years_scaled_all = (future_years - mean_all) / std_all
+
+    final_all = Regressions.LinearRegression()                     # Create model -> train on scaled data -> predict.
+    final_all.fit(X_all_scaled, Y_all)   
+
+    future_preds_all = final_all.predict(future_years_scaled_all)
+
+    print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # Ridge Regression: _________________________________________________
 
