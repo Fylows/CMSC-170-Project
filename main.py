@@ -74,22 +74,19 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # Polynomial Regression______________________________________________
-def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
+def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, degree):
     mean = X_train.mean(axis = 0)                                   # Get mean and standard dev. of training data.
     std = X_train.std(axis = 0)                         
     std[std == 0] = 1.0                                             # prevent zero division    
 
     X_train_scaled = (X_train - mean) / std                         
-    X_test_scaled = (X_test - mean) / std
-
-    future_years_scaled = (future_years - mean) / std  
+    X_test_scaled = (X_test - mean) / std 
     
-    final = Regressions.PolynomialRegression()
+    final = Regressions.PolynomialRegression(degree = degree)
     final.fit(X_train_scaled, Y_train)
 
     preds = final.predict(X_test_scaled)
-    future_preds = final.predict(future_years_scaled)
-
+    
     # Get avg. error.
     mae = utility.Mean_average_error(               
         {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},  
@@ -189,7 +186,7 @@ def main():
     Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
     print("Polynomial: ____________________________________________________\n")
-    Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
+    Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources)
     
 
     print("\nRidge: _____________________________________________________\n")
