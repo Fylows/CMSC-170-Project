@@ -4,12 +4,13 @@ import numpy as np
 
 # Print Prediction Function: ________________________________________
 
-def PrintPrediction(years, preds, sources):           
-    for year, pred in zip(years, preds):              # Iterate through years and predictions:
-        print(f"\n{year[0]}:")                        #    Print predicted usage for each fuel source.
-
-        for i in range(len(sources)):
+def PrintPrediction(years, preds, sources):
+    keep = [i for i, s in enumerate(sources) if s != "Grand Total"] # remove grand total since that isnt accurate
+    for year, pred in zip(years, preds):    # iterate through all years and their corresponding prediction
+        print(f"\n{year[0]}:")
+        for i in keep:
             print(f"{sources[i]:<20}{pred[i]:,.2f}")
+        print(f"{'Grand Total':<20}{pred[keep].sum():,.2f}")    # sum of all the predictions
 
 # Linear Regression: ________________________________________________
 
@@ -162,7 +163,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
-    
+
 
     # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
     PrintPrediction(future_years, future_preds_all, fuel_sources)
