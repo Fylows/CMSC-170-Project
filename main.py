@@ -42,8 +42,8 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     )
 
     # Print predictions for test years.
-    for pred in preds:
-        print(pred)
+    # for pred in preds:
+    #     print(pred)
 
     print(f"\nMean Average Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
@@ -70,10 +70,11 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     future_preds_all = final_all.predict(future_years_scaled_all)
 
-    print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # Polynomial Regression______________________________________________
+
 def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree):
     mean = X_train.mean(axis = 0)                                   # Get mean and standard dev. of training data.
     std = X_train.std(axis = 0)                         
@@ -100,8 +101,8 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
     )
 
     # Print predictions for test years.
-    for pred in preds:
-        print(pred)
+    # for pred in preds:
+    #     print(pred)
 
     print(f"\nMean Average Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
@@ -128,7 +129,7 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
 
     future_preds_all = final_all.predict(future_years_scaled_all)
 
-    print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # Ridge Regression: _________________________________________________
@@ -158,11 +159,28 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-    print(f"\nMean Average Error (MAE): {mae}")
+    print(f"Mean Average Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
 
+    # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    X_all = np.concatenate((X_train, X_test))
+    Y_all = np.concatenate((Y_train, Y_test))
+
+    mean_all = X_all.mean(axis = 0)                                
+    std_all = X_all.std(axis = 0)  
+    std_all[std_all == 0] = 1.0                                    
+
+    X_all_scaled = (X_all - mean_all) / std_all                    
+    future_years_scaled_all = (future_years - mean_all) / std_all
+
+    final_all = Regressions.RidgeRegression(alpha=12)                     
+    final_all.fit(X_all_scaled, Y_all)   
+
+    future_preds_all = final_all.predict(future_years_scaled_all)
+
     # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
-    # PrintPrediction(future_years, preds, fuel_sources)
+    PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # main(): ___________________________________________________________
 
@@ -182,12 +200,11 @@ def main():
     Y_test  = data[split:]
     future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)  # Create array of years to predict.
 
-    print("Linear: ____________________________________________________\n")
+    print("Linear: ____________________________________________________")
     Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
-    print("Polynomial: ____________________________________________________\n")
+    print("\nPolynomial: ____________________________________________________")
     Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
-    
 
     print("\nRidge: _____________________________________________________\n")
     Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
