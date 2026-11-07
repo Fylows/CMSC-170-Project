@@ -16,17 +16,17 @@ def parse_csv(file_path: str) -> np.array:
     # columns as a list
     return data, data[:, 0], lines[0].strip().split('\t')[1:]
 
-def Mean_average_error(Y_true: dict, Y_pred: dict) -> float:
+def Mean_absolute_error(Y_true: dict, Y_pred: dict) -> float:
     """
     formula from: https://en.wikipedia.org/wiki/Mean_absolute_error
-    Calculate the Mean Average Error (MAE) between true and predicted values.
+    Calculate the Mean Absolute Error (MAE) between true and predicted values.
 
     Parameters:
     Y_true (dict): A dictionary containing the true values.
     Y_pred (dict): A dictionary containing the predicted values.
 
     Returns:
-    float: The Mean Average Error.
+    float: The Mean Absolute Error.
     """
     if not Y_true or not Y_pred:
         raise ValueError("Input dictionaries must not be empty.")
