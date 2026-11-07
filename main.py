@@ -74,7 +74,7 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # Polynomial Regression______________________________________________
-def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, degree):
+def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree):
     mean = X_train.mean(axis = 0)                                   # Get mean and standard dev. of training data.
     std = X_train.std(axis = 0)                         
     std[std == 0] = 1.0                                             # prevent zero division    
@@ -123,7 +123,7 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, degree):
     X_all_scaled = (X_all - mean_all) / std_all                    
     future_years_scaled_all = (future_years - mean_all) / std_all
 
-    final_all = Regressions.PolynomialRegression()                     
+    final_all = Regressions.PolynomialRegression(degree=degree)                     
     final_all.fit(X_all_scaled, Y_all)   
 
     future_preds_all = final_all.predict(future_years_scaled_all)
@@ -185,8 +185,9 @@ def main():
     print("Linear: ____________________________________________________\n")
     Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
-    # print("Polynomial: ____________________________________________________\n")
-    # Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources)
+    print("Polynomial: ____________________________________________________\n")
+    Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
+    
 
     print("\nRidge: _____________________________________________________\n")
     Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
