@@ -133,7 +133,7 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, degree):
 
 # Ridge Regression: _________________________________________________
 
-def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources):
+def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     
     # get mean and std of training data, to scale both training and testing data
     mean = X_train.mean(axis=0)
@@ -145,7 +145,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources):
     X_train_scaled = (X_train - mean) / std
     X_test_scaled  = (X_test - mean) / std
         
-    final = Regressions.RidgeRegression(alpha=0.001) # hardcoded alpha for now, can be changed later
+    final = Regressions.RidgeRegression(alpha=12) # hardcoded alpha for now, can be changed later
     final.fit(X_train_scaled, Y_train)
     preds = final.predict(X_test_scaled)
     
@@ -158,11 +158,11 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources):
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-    for pred in preds:
-        print(pred)
-
     print(f"\nMean Average Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+
+    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    # PrintPrediction(future_years, preds, fuel_sources)
 
 # main(): ___________________________________________________________
 
@@ -185,12 +185,11 @@ def main():
     print("Linear: ____________________________________________________\n")
     Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
-    print("Polynomial: ____________________________________________________\n")
-    Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources)
-    
+    # print("Polynomial: ____________________________________________________\n")
+    # Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources)
 
     print("\nRidge: _____________________________________________________\n")
-    Ridge(X_train, Y_train, X_test, Y_test, fuel_sources)
+    Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
 if __name__ == "__main__":
     main()
