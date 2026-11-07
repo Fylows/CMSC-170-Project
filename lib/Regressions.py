@@ -35,8 +35,51 @@ class LinearRegression(object):
 
 # Polynomial Regression: ____________________________________________
 
-class PolyNomialRegression(object):
-    pass
+# Referenced from
+# https://www.geeksforgeeks.org/machine-learning/python-implementation-of-polynomial-regression/ 
+class PolynomialRegression(object):
+    def __init__ (self, iterations=1000, learning_rate=0.01, degree=4):
+        self.iterations = iterations            
+        self.learning_rate = learning_rate
+        self.degree = degree               
+
+    def fit(self, X, y):
+        n, n_features = X.shape                 # get no. of years
+        n_targets = y.shape[1]                  # get no. of fuel sources
+
+        X_poly = np.ones((n, self.degree), dtype = float)       # create array for polynomial feat.
+
+        for i in range(self.degree):
+            X_poly[:, i] = X[:, 0] ** (i + 1)         # calculate x, x^2, x^3, ^4
+
+        n_features = X_poly.shape[1]            # update no. of feat. after expansion
+
+        self.weights = np.zeros((n_features, n_targets), dtype = float)
+        self.bias = np.zeros(n_targets, dtype = float)              # initialize bias
+
+        # loop for n iterations
+        for _ in range(self.iterations):
+            Y_pred = X_poly.dot(self.weights) + self.bias       # predict w current weights and bias
+            diff = y - Y_pred                                   # get error
+
+            # weight and bias
+            dw = (X_poly.T.dot(diff) / n) * -2
+            db = (np.sum(diff, axis = 0)/ n) * -2
+
+            self.weights -= self.learning_rate * dw             # update weight
+            self.bias -= self.learning_rate * db                # update bias
+        
+        return self
+
+    def predict(self, X):
+        X_poly = np.ones((X.shape[0], self.degree), dtype = float)
+
+        for i in range(self.degree):
+            X_poly[:, i] = X[:, 0] ** (i + 1)
+        
+        
+        return X_poly.dot(self.weights) + self.bias
+
 
 # Ridge Regression: _________________________________________________
 
