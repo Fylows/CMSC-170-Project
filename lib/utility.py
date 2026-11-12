@@ -10,11 +10,12 @@ def parse_csv(file_path: str) -> np.array:
         for line in lines[1:]
     ])
     
-    
     # returns data as a np array
     # rows as a list
     # columns as a list
     return data, data[:, 0], lines[0].strip().split('\t')[1:]
+
+# Mean Absolute Error: ______________________________________________
 
 def Mean_absolute_error(Y_true: dict, Y_pred: dict) -> float:
     """
@@ -44,6 +45,8 @@ def Mean_absolute_error(Y_true: dict, Y_pred: dict) -> float:
 
     mae = total_error / n
     return mae
+
+# Mean Absolute Percentage Error: ___________________________________
 
 def Mean_absolute_percentage_error(Y_true: dict, Y_pred: dict) -> float:
     """
@@ -78,3 +81,34 @@ def Mean_absolute_percentage_error(Y_true: dict, Y_pred: dict) -> float:
 
     mape = (total_percentage_error / count) * 100
     return mape
+
+# Root Mean Squared Error: __________________________________________
+
+def Root_mean_squared_error(Y_true: dict, Y_pred: dict) -> float:
+    """
+    Formula from: https://en.wikipedia.org/wiki/Root_mean_square_deviation
+      * Calculate the Root Mean Squared Error (RMSE) between true and predicted values.
+
+    Parameters:
+      * Y_true (dict): A dictionary containing the true values.
+      * Y_pred (dict): A dictionary containing the predicted values.
+
+    Returns:
+      * float: The Root Mean Squared Error.
+    """
+    if not Y_true or not Y_pred:
+        raise ValueError("Input dictionaries must not be empty.")
+
+    if set(Y_true.keys()) != set(Y_pred.keys()):
+        raise ValueError("Input dictionaries must have the same keys.")
+
+    total_error = 0.0
+    n = sum(len(v) for v in Y_true.values())
+  
+    for k, v in Y_true.items():
+        if k not in Y_pred:
+            raise ValueError(f"Key '{k}' is missing in the predicted values.")
+        total_error += sum(((y_true - y_pred) ** 2) for y_true, y_pred in zip(v, Y_pred[k]))
+
+    rmse = np.sqrt(total_error / n)
+    return rmse

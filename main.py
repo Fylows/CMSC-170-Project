@@ -40,8 +40,15 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
+    # Get root mean sqd. error.
+    rmse = utility.Root_mean_squared_error(
+        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
+        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+    )
+
     print(f"\nMean Absolute Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+    print(f"Root Mean Squared Error (RMSE): {rmse}")
 
     X_all = np.concatenate((X_train, X_test))                      # Put data back together by concatenation.
     Y_all = np.concatenate((Y_train, Y_test))
@@ -88,8 +95,15 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
+    # Get root mean sqd. error.
+    rmse = utility.Root_mean_squared_error(
+        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
+        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+    )
+
     print(f"\nMean Absolute Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+    print(f"Root Mean Squared Error (RMSE): {rmse}")
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -134,13 +148,20 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
         {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
+
     mape = utility.Mean_absolute_percentage_error(
+        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
+        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+    )
+
+    rmse = utility.Root_mean_squared_error(
         {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
     print(f"Mean Absolute Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+    print(f"Root Mean Squared Error (RMSE): {rmse}")
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -159,7 +180,6 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
-
 
     # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
     PrintPrediction(future_years, future_preds_all, fuel_sources)
