@@ -40,8 +40,7 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-
-    print(f"\nMean Average Error (MAE): {mae}")
+    print(f"\nMean Absolute Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
 
     X_all = np.concatenate((X_train, X_test))                      # Put data back together by concatenation.
@@ -89,11 +88,8 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-
-    print(f"\nMean Average Error (MAE): {mae}")
+    print(f"\nMean Absolute Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
-
-
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -143,7 +139,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-    print(f"Mean Average Error (MAE): {mae}")
+    print(f"Mean Absolute Error (MAE): {mae}")
     print(f"Mean Absolute Percentage Error (MAPE): {mape}")
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
