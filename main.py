@@ -5,50 +5,83 @@ import numpy as np
 # Print Prediction Function: ________________________________________
 
 def PrintPrediction(years, preds, sources):
-    keep = [i for i, s in enumerate(sources) if s != "Grand Total"] # remove grand total since that isnt accurate
-    for year, pred in zip(years, preds):    # iterate through all years and their corresponding prediction
+    keep = [i for i, s in enumerate(sources) if s != "Grand Total"] # Remove grand total since that isn't accurate.
+    
+    for year, pred in zip(years, preds):                            # Iterate through all years and their corresponding prediction.
         print(f"\n{year[0]}:")
+        print(f"{'Source':<20}{'Generated Power (GWh)':}")
+
         for i in keep:
             print(f"{sources[i]:<20}{pred[i]:,.2f}")
-        print(f"{'Grand Total':<20}{pred[keep].sum():,.2f}")    # sum of all the predictions
+
+        print("- - - - - - - - - - - - - - - -")
+        print(f"{'Grand Total':<20}{pred[keep].sum():,.2f}")        # Sum of all the predictions.
 
 # Linear Regression: ________________________________________________
 
 def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
-    mean = X_train.mean(axis = 0)                                           # Get mean and standard dev. of training data.
+    mean = X_train.mean(axis = 0)                                          # Get mean and standard dev. of training data.
     std = X_train.std(axis = 0)                         
-    std[std == 0] = 1.0                                                     # Prevent division by zero.
+    std[std == 0] = 1.0                                                    # Prevent division by zero.
 
-    X_train_scaled = (X_train - mean) / std                                 # Scale training and testing data for gradient descent convergence.
+    X_train_scaled = (X_train - mean) / std                                # Scale training and testing data for gradient descent convergence.
     X_test_scaled = (X_test - mean) / std
         
-    final = Regressions.LinearRegression()                                  # Create model -> train on scaled training data -> predict.
+    final = Regressions.LinearRegression()                                 # Create model -> train on scaled training data -> predict.
     final.fit(X_train_scaled, Y_train)                       
     
     preds = final.predict(X_test_scaled)    
-    preds = np.maximum(preds,0)
+    preds = np.maximum(preds, 0)
+
+    keep = [i for i, s in enumerate(fuel_sources) if s != "Grand Total"]   # Get keep from PrintPrediction().
 
     # Get avg. error.
     mae = utility.Mean_absolute_error(               
-        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},  
-        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+        {fuel_sources[i]: Y_test[:, i] for i in keep},  
+        {fuel_sources[i]: preds[:, i] for i in keep}
     )
 
     # Get mean abs. pctg. error.
     mape = utility.Mean_absolute_percentage_error(
-        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
-        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+        {fuel_sources[i]: Y_test[:, i] for i in keep},
+        {fuel_sources[i]: preds[:, i] for i in keep}
     )
 
     # Get root mean sqd. error.
     rmse = utility.Root_mean_squared_error(
-        {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
-        {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
+        {fuel_sources[i]: Y_test[:, i] for i in keep},
+        {fuel_sources[i]: preds[:, i] for i in keep}
     )
 
-    print(f"\nMean Absolute Error (MAE): {mae}")
-    print(f"Mean Absolute Percentage Error (MAPE): {mape}")
-    print(f"Root Mean Squared Error (RMSE): {rmse}")
+    print("\n[OVERALL EVAL. METRICS]")
+    print(f"\n{'Mean Absolute Error (MAE):':<40} {mae:,.2f}")
+    print(f"{'Mean Absolute Percentage Error (MAPE):':<40} {mape:,.2f}")
+    print(f"{'Root Mean Squared Error (RMSE):':<40} {rmse:,.2f}")
+
+    # Individual MAE, MAPE, RMSEs:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    print("\n[INDIVIDUAL EVAL. METRICS]\n")
+    print(f"{'Fuel Source':<20}{'MAE':>12}{'MAPE':>12}{'RMSE':>12}")
+
+    for i in keep:
+        mae_i = utility.Mean_absolute_error(
+            {fuel_sources[i]: Y_test[:, i]},
+            {fuel_sources[i]: preds[:, i]}
+        )
+
+        mape_i = utility.Mean_absolute_percentage_error(
+            {fuel_sources[i]: Y_test[:, i]},
+            {fuel_sources[i]: preds[:, i]}
+        )
+
+        rmse_i = utility.Root_mean_squared_error(
+            {fuel_sources[i]: Y_test[:, i]},
+            {fuel_sources[i]: preds[:, i]}
+        )
+
+        print(f"{fuel_sources[i]:<20}{mae_i:>12,.2f}{mape_i:>12,.2f}{rmse_i:>12,.2f}")
+
+    # Actual Model: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
     X_all = np.concatenate((X_train, X_test))                      # Put data back together by concatenation.
     Y_all = np.concatenate((Y_train, Y_test))
@@ -65,7 +98,8 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
-    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    
+    print("\n[YEARLY PREDICTIONS]")
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # Polynomial Regression______________________________________________
@@ -82,6 +116,7 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
     final.fit(X_train_scaled, Y_train)
 
     preds = final.predict(X_test_scaled)
+    preds = np.maximum(preds, 0)
     
     # Get avg. error.
     mae = utility.Mean_absolute_error(               
@@ -101,9 +136,9 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-    print(f"\nMean Absolute Error (MAE): {mae}")
-    print(f"Mean Absolute Percentage Error (MAPE): {mape}")
-    print(f"Root Mean Squared Error (RMSE): {rmse}")
+    print(f"\n{'Mean Absolute Error (MAE):':<40} {mae}")
+    print(f"{'Mean Absolute Percentage Error (MAPE):':<40} {mape}")
+    print(f"{'Root Mean Squared Error (RMSE):':<40} {rmse}")
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -123,7 +158,7 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
 
-    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # Ridge Regression: _________________________________________________
@@ -140,9 +175,11 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     X_train_scaled = (X_train - mean) / std
     X_test_scaled  = (X_test - mean) / std
         
-    final = Regressions.RidgeRegression(alpha=12) # hardcoded alpha for now, can be changed later
+    final = Regressions.RidgeRegression(alpha=0.001) # hardcoded alpha for now, can be changed later
     final.fit(X_train_scaled, Y_train)
+
     preds = final.predict(X_test_scaled)
+    preds = np.maximum(preds, 0)
     
     mae = utility.Mean_absolute_error(
         {fuel_sources[i]: Y_test[:, i] for i in range(len(fuel_sources))},
@@ -159,9 +196,9 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
         {fuel_sources[i]: preds[:, i] for i in range(len(fuel_sources))}
     )
 
-    print(f"Mean Absolute Error (MAE): {mae}")
-    print(f"Mean Absolute Percentage Error (MAPE): {mape}")
-    print(f"Root Mean Squared Error (RMSE): {rmse}")
+    print(f"\n{'Mean Absolute Error (MAE):':<40} {mae}")
+    print(f"{'Mean Absolute Percentage Error (MAPE):':<40} {mape}")
+    print(f"{'Root Mean Squared Error (RMSE):':<40} {rmse}")
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -181,7 +218,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
 
-    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
+    # print("\nNew: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _")
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
 # main(): ___________________________________________________________
@@ -202,14 +239,14 @@ def main():
     Y_test  = data[split:]
     future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)  # Create array of years to predict.
 
-    print("Linear: ____________________________________________________")
+    print("Linear: __________________________________________________")
     Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
-    print("\nPolynomial: ____________________________________________________")
-    Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
+    # print("\nPolynomial: ______________________________________________")
+    # Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
 
-    print("\nRidge: _____________________________________________________\n")
-    Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
+    # print("\nRidge: ___________________________________________________\n")
+    # Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
 if __name__ == "__main__":
     main()
