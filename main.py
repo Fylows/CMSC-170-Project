@@ -61,7 +61,6 @@ def PlotComparison(linear, polynomial, ridge):
     mplot.tight_layout()
     mplot.show()
 
-
 # Get Overall Metrics Function: _________________________________________________________
 def GetOverallMetrics(keep, fuel_sources, Y_test, preds):
     overall_metrics = {}                                   # Dict containing per fuel source's indiv. metrics to return.
@@ -329,7 +328,7 @@ def main():
     results = ridge_results["overall_metrics"]
     print(f"{'Ridge':<20}{results['mae']:>12,.2f}{results['mape']:>12,.2f}{results['rmse']:>12,.2f}")
 
-    # Print <metirc> of individual fuel sources per regression model:
+    # Print <metric> of individual fuel sources per regression model:
     for metric in ["mae", "mape", "rmse"]:
         print(f"\n[{metric.upper()} PER FUEL SOURCE]\n")
         print(f"{'Fuel Source':<20}{'Linear':>12}{'Polynomial':>12}{'Ridge':>12}{'Best':>12}")
@@ -353,7 +352,6 @@ def main():
         polynomial_results["overall_metrics"],
         ridge_results["overall_metrics"]
     )
-
 
 if __name__ == "__main__":
     main()
