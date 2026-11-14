@@ -28,11 +28,15 @@ def GetOverallMetrics(keep, fuel_sources, Y_test, preds):
     print(f"{'Mean Absolute Percentage Error (MAPE):':<40} {mape:,.2f}")
     print(f"{'Root Mean Squared Error (RMSE):':<40} {rmse:,.2f}")
 
+    return mae, mape, rmse
+
 # Get Individual Metrics Function: ______________________________________________________
 
 def GetIndividualMetrics(keep, fuel_sources, Y_test, preds):
     print("\n[INDIVIDUAL EVAL. METRICS]\n")
     print(f"{'Fuel Source':<20}{'MAE':>12}{'MAPE':>12}{'RMSE':>12}")
+
+    individual_metrics = {}                                           # Dict containing per fuel source's indiv. metrics to return.
 
     for i in keep:
         mae_i = utility.Mean_absolute_error(
@@ -51,6 +55,10 @@ def GetIndividualMetrics(keep, fuel_sources, Y_test, preds):
         )
 
         print(f"{fuel_sources[i]:<20}{mae_i:>12,.2f}{mape_i:>12,.2f}{rmse_i:>12,.2f}")
+        
+        individual_metrics[fuel_sources[i]] = {"mae": mae_i, "mape": mape_i, "rmse": rmse_i}
+
+    return individual_metrics
 
 # Print Prediction Function: ____________________________________________________________
 
@@ -72,14 +80,14 @@ def PrintPrediction(years, preds, sources):
 # Linear Regression: ____________________________________________________________________
 
 def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
-    mean = X_train.mean(axis = 0)                                          # Get mean and standard dev. of training data.
+    mean = X_train.mean(axis = 0)                                                 # Get mean and standard dev. of training data.
     std = X_train.std(axis = 0)                         
-    std[std == 0] = 1.0                                                    # Prevent division by zero.
+    std[std == 0] = 1.0                                                           # Prevent division by zero.
 
-    X_train_scaled = (X_train - mean) / std                                # Scale training and testing data for gradient descent convergence.
+    X_train_scaled = (X_train - mean) / std                                       # Scale training and testing data for gradient descent convergence.
     X_test_scaled = (X_test - mean) / std
         
-    final = Regressions.LinearRegression()                                 # Create model -> train on scaled training data -> predict.
+    final = Regressions.LinearRegression()                                        # Create model -> train on scaled training data -> predict.
     final.fit(X_train_scaled, Y_train)                       
     
     preds = final.predict(X_test_scaled)    
@@ -87,8 +95,8 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     keep = [i for i, s in enumerate(fuel_sources) if s != "Grand Total"]
 
-    GetOverallMetrics(keep, fuel_sources, Y_test, preds)                   # Overall MAE, MAPE, and RMSE.
-    GetIndividualMetrics(keep, fuel_sources, Y_test, preds)                # Individual ...
+    overall_metrics = GetOverallMetrics(keep, fuel_sources, Y_test, preds)        # Overall MAE, MAPE, and RMSE.
+    individual_metrics = GetIndividualMetrics(keep, fuel_sources, Y_test, preds)  # Individual ...
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -110,6 +118,11 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
+    return {"overall_metrics": overall_metrics, 
+            "preds": preds,
+            "future_preds_all": future_preds_all,
+            "individual_metrics": individual_metrics}
+
 # Polynomial Regression__________________________________________________________________
 
 def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree):
@@ -128,8 +141,8 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
 
     keep = [i for i, s in enumerate(fuel_sources) if s != "Grand Total"]
     
-    GetOverallMetrics(keep, fuel_sources, Y_test, preds)                               # overall MAE, MAPE, and RMSE
-    GetIndividualMetrics(keep, fuel_sources, Y_test, preds)                            # individual ...
+    overall_metrics = GetOverallMetrics(keep, fuel_sources, Y_test, preds)             # overall MAE, MAPE, and RMSE
+    individual_metrics = GetIndividualMetrics(keep, fuel_sources, Y_test, preds)       # individual ...
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -151,6 +164,11 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
 
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
+    return {"overall_metrics": overall_metrics, 
+            "preds": preds,
+            "future_preds_all": future_preds_all,
+            "individual_metrics": individual_metrics}
+
 # Ridge Regression: _____________________________________________________________________
 
 def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
@@ -165,7 +183,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     X_train_scaled = (X_train - mean) / std
     X_test_scaled  = (X_test - mean) / std
         
-    final = Regressions.RidgeRegression(alpha=0.001) # hardcoded alpha for now, can be changed later
+    final = Regressions.RidgeRegression(alpha=0.001)                              # hardcoded alpha for now, can be changed later
     final.fit(X_train_scaled, Y_train)
 
     preds = final.predict(X_test_scaled)
@@ -173,8 +191,8 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     keep = [i for i, s in enumerate(fuel_sources) if s != "Grand Total"]
     
-    GetOverallMetrics(keep, fuel_sources, Y_test, preds)                   # Overall MAE, MAPE, and RMSE.
-    GetIndividualMetrics(keep, fuel_sources, Y_test, preds)                # Individual ...
+    overall_metrics = GetOverallMetrics(keep, fuel_sources, Y_test, preds)        # Overall MAE, MAPE, and RMSE.
+    individual_metrics = GetIndividualMetrics(keep, fuel_sources, Y_test, preds)  # Individual ...
 
     # Final Model (retrain on all years): _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -196,15 +214,20 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
 
     PrintPrediction(future_years, future_preds_all, fuel_sources)
 
+    return {"overall_metrics": overall_metrics, 
+            "preds": preds,
+            "future_preds_all": future_preds_all,
+            "individual_metrics": individual_metrics}
+
 # main(): _______________________________________________________________________________
 
 def main():
     data, years, fuel_sources = utility.parse_csv("csv/Power Generation by Fuel Source.csv")
-    data = data[:, 1:]                                       # remove year column
+    data = data[:, 1:]                                                            # remove year column
     years = np.asarray(years, dtype=float)
     data = np.asarray(data, dtype=float)
     
-    assert len(years) == len(data), (len(years), len(data))  # rows must line up
+    assert len(years) == len(data), (len(years), len(data))                       # rows must line up
 
     split = int(len(years) * 0.8)
 
@@ -212,16 +235,16 @@ def main():
     X_test  = years[split:].reshape(-1, 1)
     Y_train = data[:split]
     Y_test  = data[split:]
-    future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)        # Create array of years to predict.
+    future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)  # Create array of years to predict.
 
     print("Linear: _________________________________________________________")
-    Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
+    linear_results = Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
     print("\nPolynomial: _____________________________________________________")
-    Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
+    polynomial_results = Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
 
     print("\nRidge: __________________________________________________________")
-    Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
+    ridge_results = Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
 if __name__ == "__main__":
     main()
