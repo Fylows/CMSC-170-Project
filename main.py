@@ -1,9 +1,68 @@
 from lib import utility
 from lib import Regressions
 import numpy as np
+import matplotlib       # for plotting
+matplotlib.use('TkAgg') # for display
+import matplotlib.pyplot as mplot
+
+# Plot Comparison Graph: ___________________________________________________
+
+def PlotComparison(linear, polynomial, ridge):
+
+    # Regression models used
+    models = ["Linear", "Polynomial", "Ridge"]
+
+    # Get overall MAE values for each model
+    mae = [
+        linear["mae"],
+        polynomial["mae"],
+        ridge["mae"]
+    ]
+
+    # Get overall MAPE values for each model
+    mape = [
+        linear["mape"],
+        polynomial["mape"],
+        ridge["mape"]
+    ]
+
+    # Get overall RMSE values for each model
+    rmse = [
+        linear["rmse"],
+        polynomial["rmse"],
+        ridge["rmse"]
+    ]
+
+    # Create figure(fig) and graphs(axes): 1 figure, 3 graphs
+    fig, axes = mplot.subplots(1, 3, figsize=(15, 5))
+
+    # MAE Graph
+    axes[0].bar(models, mae)                            # plot MAE values for each regression model
+    axes[0].set_title("Mean Absolute Error (MAE)")      # graph title
+    axes[0].set_ylabel("Error")                         # label for Y axis
+    axes[0].grid(axis="y", alpha=0.3)                   # set grid
+
+    # MAPE Graph
+    axes[1].bar(models, mape)                           # plot MAPE values for each regression model
+    axes[1].set_title("Mean Absolute Percentage Error (MAPE)")
+    axes[1].set_ylabel("Percentage (%)")
+    axes[1].grid(axis="y", alpha=0.3)
+
+    # RMSE Graph
+    axes[2].bar(models, rmse)                           # plot RMSE values for each regression model
+    axes[2].set_title("Root Mean Squared Error (RMSE)")
+    axes[2].set_ylabel("Error")
+    axes[2].grid(axis="y", alpha=0.3)
+
+    # figure title
+    fig.suptitle("Regression Models Performance Comparison")
+
+    # for display
+    mplot.tight_layout()
+    mplot.show()
+
 
 # Get Overall Metrics Function: _________________________________________________________
-
 def GetOverallMetrics(keep, fuel_sources, Y_test, preds):
     overall_metrics = {}                                   # Dict containing per fuel source's indiv. metrics to return.
 
@@ -287,6 +346,14 @@ def main():
             smallest_metric = min(sources_metric, key = sources_metric.get)
 
             print(f"{fuel_source:<20}{linear_source_metric:>12,.2f}{polynomial_source_metric:>12,.2f}{ridge_source_metric:>12,.2f}{smallest_metric:>12}")
+
+    # Plot comparison of errors
+    PlotComparison(
+        linear_results["overall_metrics"],
+        polynomial_results["overall_metrics"],
+        ridge_results["overall_metrics"]
+    )
+
 
 if __name__ == "__main__":
     main()
