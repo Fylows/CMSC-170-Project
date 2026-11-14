@@ -5,11 +5,15 @@ import numpy as np
 # Get Overall Metrics Function: _________________________________________________________
 
 def GetOverallMetrics(keep, fuel_sources, Y_test, preds):
+    overall_metrics = {}                                   # Dict containing per fuel source's indiv. metrics to return.
+
     # Get avg. error.
     mae = utility.Mean_absolute_error(               
         {fuel_sources[i]: Y_test[:, i] for i in keep},  
         {fuel_sources[i]: preds[:, i] for i in keep}
     )
+
+    overall_metrics["mae"] = mae
 
     # Get mean abs. pctg. error.
     mape = utility.Mean_absolute_percentage_error(
@@ -17,18 +21,22 @@ def GetOverallMetrics(keep, fuel_sources, Y_test, preds):
         {fuel_sources[i]: preds[:, i] for i in keep}
     )
 
+    overall_metrics["mape"] = mape
+
     # Get root mean sqd. error.
     rmse = utility.Root_mean_squared_error(
         {fuel_sources[i]: Y_test[:, i] for i in keep},
         {fuel_sources[i]: preds[:, i] for i in keep}
     )
 
+    overall_metrics["rmse"] = rmse
+
     print("\n[OVERALL EVAL. METRICS]")
     print(f"\n{'Mean Absolute Error (MAE):':<40} {mae:,.2f}")
     print(f"{'Mean Absolute Percentage Error (MAPE):':<40} {mape:,.2f}")
     print(f"{'Root Mean Squared Error (RMSE):':<40} {rmse:,.2f}")
 
-    return mae, mape, rmse
+    return overall_metrics
 
 # Get Individual Metrics Function: ______________________________________________________
 
@@ -237,6 +245,7 @@ def main():
     Y_test  = data[split:]
     future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)  # Create array of years to predict.
 
+    # Print results for each regression model:
     print("Linear: _________________________________________________________")
     linear_results = Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
 
@@ -245,6 +254,39 @@ def main():
 
     print("\nRidge: __________________________________________________________")
     ridge_results = Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
+
+    print("\nComparison and Evaluation: ______________________________________")
+
+    # Print MAE, MAPE, and RMSE per regression model:
+    print("\n[COMPARISON PER REGRESSION MODEL]\n")
+    print(f"{'Model':<20}{'MAE':>12}{'MAPE':>12}{'RMSE':>12}")
+
+    results = linear_results["overall_metrics"]
+    print(f"{'Linear':<20}{results['mae']:>12,.2f}{results['mape']:>12,.2f}{results['rmse']:>12,.2f}")
+
+    results = polynomial_results["overall_metrics"]
+    print(f"{'Polynomial':<20}{results['mae']:>12,.2f}{results['mape']:>12,.2f}{results['rmse']:>12,.2f}")
+
+    results = ridge_results["overall_metrics"]
+    print(f"{'Ridge':<20}{results['mae']:>12,.2f}{results['mape']:>12,.2f}{results['rmse']:>12,.2f}")
+
+    # Print <metirc> of individual fuel sources per regression model:
+    for metric in ["mae", "mape", "rmse"]:
+        print(f"\n[{metric.upper()} PER FUEL SOURCE]\n")
+        print(f"{'Fuel Source':<20}{'Linear':>12}{'Polynomial':>12}{'Ridge':>12}{'Best':>12}")
+
+        for fuel_source in linear_results["individual_metrics"].keys():
+            linear_source_metric = linear_results["individual_metrics"][fuel_source][metric]
+            polynomial_source_metric = polynomial_results["individual_metrics"][fuel_source][metric]
+            ridge_source_metric = ridge_results["individual_metrics"][fuel_source][metric]
+
+            sources_metric = {"Linear": linear_source_metric, 
+                              "Polynomial": polynomial_source_metric,
+                              "Ridge": ridge_source_metric}
+
+            smallest_metric = min(sources_metric, key = sources_metric.get)
+
+            print(f"{fuel_source:<20}{linear_source_metric:>12,.2f}{polynomial_source_metric:>12,.2f}{ridge_source_metric:>12,.2f}{smallest_metric:>12}")
 
 if __name__ == "__main__":
     main()
