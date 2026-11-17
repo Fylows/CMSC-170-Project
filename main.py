@@ -2,7 +2,6 @@ from lib import utility
 from lib import Regressions
 import numpy as np
 import matplotlib       # for plotting
-matplotlib.use('TkAgg') # for display
 import matplotlib.pyplot as mplot
 
 # Plot Comparison Graph: ___________________________________________________
@@ -59,7 +58,7 @@ def PlotComparison(linear, polynomial, ridge):
 
     # for display
     mplot.tight_layout()
-    mplot.show()
+    return fig
 
 # Get Overall Metrics Function: _________________________________________________________
 def GetOverallMetrics(keep, fuel_sources, Y_test, preds):
@@ -285,9 +284,9 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
             "future_preds_all": future_preds_all,
             "individual_metrics": individual_metrics}
 
-# main(): _______________________________________________________________________________
+# LoadData(): ___________________________________________________________________________
 
-def main():
+def LoadData():
     data, years, fuel_sources = utility.parse_csv("csv/Power Generation by Fuel Source.csv")
     data = data[:, 1:]                                                            # remove year column
     years = np.asarray(years, dtype=float)
@@ -302,6 +301,13 @@ def main():
     Y_train = data[:split]
     Y_test  = data[split:]
     future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)  # Create array of years to predict.
+
+    return X_train, X_test, Y_train, Y_test, future_years, fuel_sources
+
+# main(): _______________________________________________________________________________
+
+def main():
+    X_train, X_test, Y_train, Y_test, future_years, fuel_sources = LoadData()
 
     # Print results for each regression model:
     print("Linear: _________________________________________________________")
@@ -347,11 +353,13 @@ def main():
             print(f"{fuel_source:<20}{linear_source_metric:>12,.2f}{polynomial_source_metric:>12,.2f}{ridge_source_metric:>12,.2f}{smallest_metric:>12}")
 
     # Plot comparison of errors
-    PlotComparison(
-        linear_results["overall_metrics"],
-        polynomial_results["overall_metrics"],
-        ridge_results["overall_metrics"]
-    )
+    fig = PlotComparison(linear_results["overall_metrics"],
+                         polynomial_results["overall_metrics"],
+                         ridge_results["overall_metrics"]
+                        )
+
+    mplot.show()
 
 if __name__ == "__main__":
+    matplotlib.use('TkAgg') # for display   
     main()
