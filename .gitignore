@@ -1,2 +1,3 @@
 /lib/pycache/*
 /frontend/pycache/*
+/.venv

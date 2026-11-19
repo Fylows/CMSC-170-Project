@@ -1,5 +1,6 @@
 from lib import utility
 from lib import Regressions
+
 import numpy as np
 import matplotlib       # for plotting
 import matplotlib.pyplot as mplot
@@ -361,5 +362,5 @@ def main():
     mplot.show()
 
 if __name__ == "__main__":
-    matplotlib.use('TkAgg') # for display   
+    # matplotlib.use('TkAgg') # for display   
     main()
