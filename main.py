@@ -89,18 +89,11 @@ def GetOverallMetrics(keep, fuel_sources, Y_test, preds):
 
     overall_metrics["rmse"] = rmse
 
-    print("\n[OVERALL EVAL. METRICS]")
-    print(f"\n{'Mean Absolute Error (MAE):':<40} {mae:,.2f}")
-    print(f"{'Mean Absolute Percentage Error (MAPE):':<40} {mape:,.2f}")
-    print(f"{'Root Mean Squared Error (RMSE):':<40} {rmse:,.2f}")
-
     return overall_metrics
 
 # Get Individual Metrics Function: ______________________________________________________
 
 def GetIndividualMetrics(keep, fuel_sources, Y_test, preds):
-    print("\n[INDIVIDUAL EVAL. METRICS]\n")
-    print(f"{'Fuel Source':<20}{'MAE':>12}{'MAPE':>12}{'RMSE':>12}")
 
     individual_metrics = {}                                           # Dict containing per fuel source's indiv. metrics to return.
 
@@ -119,29 +112,10 @@ def GetIndividualMetrics(keep, fuel_sources, Y_test, preds):
             {fuel_sources[i]: Y_test[:, i]},
             {fuel_sources[i]: preds[:, i]}
         )
-
-        print(f"{fuel_sources[i]:<20}{mae_i:>12,.2f}{mape_i:>12,.2f}{rmse_i:>12,.2f}")
         
         individual_metrics[fuel_sources[i]] = {"mae": mae_i, "mape": mape_i, "rmse": rmse_i}
 
     return individual_metrics
-
-# Print Prediction Function: ____________________________________________________________
-
-def PrintPrediction(years, preds, sources):
-    print("\n[YEARLY PREDICTIONS]")
-
-    keep = [i for i, s in enumerate(sources) if s != "Grand Total"]  # Remove grand total since that isn't accurate.
-    
-    for year, pred in zip(years, preds):                             # Iterate through all years and their corresponding prediction.
-        print(f"\n{year[0]}:")
-        print(f"{'Source':<20}{'Generated Power (GWh)':}")
-
-        for i in keep:
-            print(f"{sources[i]:<20}{pred[i]:,.2f}")
-
-        print("- - - - - - - - - - - - - - - -")
-        print(f"{'Grand Total':<20}{pred[keep].sum():,.2f}")         # Sum of all the predictions.
 
 # Linear Regression: ____________________________________________________________________
 
@@ -182,8 +156,6 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
     
-    PrintPrediction(future_years, future_preds_all, fuel_sources)
-
     return {"overall_metrics": overall_metrics, 
             "preds": preds,
             "future_preds_all": future_preds_all,
@@ -227,8 +199,6 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
 
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
-
-    PrintPrediction(future_years, future_preds_all, fuel_sources)
 
     return {"overall_metrics": overall_metrics, 
             "preds": preds,
@@ -278,8 +248,6 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     future_preds_all = final_all.predict(future_years_scaled_all)
     future_preds_all = np.maximum(future_preds_all, 0)
 
-    PrintPrediction(future_years, future_preds_all, fuel_sources)
-
     return {"overall_metrics": overall_metrics, 
             "preds": preds,
             "future_preds_all": future_preds_all,
@@ -304,63 +272,3 @@ def LoadData():
     future_years = np.array([year for year in range(2021, 2031)]).reshape(-1, 1)  # Create array of years to predict.
 
     return X_train, X_test, Y_train, Y_test, future_years, fuel_sources
-
-# main(): _______________________________________________________________________________
-
-def main():
-    X_train, X_test, Y_train, Y_test, future_years, fuel_sources = LoadData()
-
-    # Print results for each regression model:
-    print("Linear: _________________________________________________________")
-    linear_results = Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
-
-    print("\nPolynomial: _____________________________________________________")
-    polynomial_results = Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
-
-    print("\nRidge: __________________________________________________________")
-    ridge_results = Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
-
-    print("\nComparison and Evaluation: ______________________________________")
-
-    # Print MAE, MAPE, and RMSE per regression model:
-    print("\n[COMPARISON PER REGRESSION MODEL]\n")
-    print(f"{'Model':<20}{'MAE':>12}{'MAPE':>12}{'RMSE':>12}")
-
-    results = linear_results["overall_metrics"]
-    print(f"{'Linear':<20}{results['mae']:>12,.2f}{results['mape']:>12,.2f}{results['rmse']:>12,.2f}")
-
-    results = polynomial_results["overall_metrics"]
-    print(f"{'Polynomial':<20}{results['mae']:>12,.2f}{results['mape']:>12,.2f}{results['rmse']:>12,.2f}")
-
-    results = ridge_results["overall_metrics"]
-    print(f"{'Ridge':<20}{results['mae']:>12,.2f}{results['mape']:>12,.2f}{results['rmse']:>12,.2f}")
-
-    # Print <metric> of individual fuel sources per regression model:
-    for metric in ["mae", "mape", "rmse"]:
-        print(f"\n[{metric.upper()} PER FUEL SOURCE]\n")
-        print(f"{'Fuel Source':<20}{'Linear':>12}{'Polynomial':>12}{'Ridge':>12}{'Best':>12}")
-
-        for fuel_source in linear_results["individual_metrics"].keys():
-            linear_source_metric = linear_results["individual_metrics"][fuel_source][metric]
-            polynomial_source_metric = polynomial_results["individual_metrics"][fuel_source][metric]
-            ridge_source_metric = ridge_results["individual_metrics"][fuel_source][metric]
-
-            sources_metric = {"Linear": linear_source_metric, 
-                              "Polynomial": polynomial_source_metric,
-                              "Ridge": ridge_source_metric}
-
-            smallest_metric = min(sources_metric, key = sources_metric.get)
-
-            print(f"{fuel_source:<20}{linear_source_metric:>12,.2f}{polynomial_source_metric:>12,.2f}{ridge_source_metric:>12,.2f}{smallest_metric:>12}")
-
-    # Plot comparison of errors
-    fig = PlotComparison(linear_results["overall_metrics"],
-                         polynomial_results["overall_metrics"],
-                         ridge_results["overall_metrics"]
-                        )
-
-    mplot.show()
-
-if __name__ == "__main__":
-    # matplotlib.use('TkAgg') # for display   
-    main()
