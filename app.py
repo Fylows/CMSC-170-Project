@@ -46,12 +46,6 @@ with st.spinner(text="Running regression models..."):
 model_name = st.selectbox("Choose a model:", ["Linear", "Polynomial", "Ridge"])
 selected_model = results[model_name]
 
-# Options for fuel source.
-fuel_options = [fuel for fuel in fuel_sources if fuel != "Grand Total"]  # Do not include "Grand Total"
-
-fuel_name = st.selectbox("Choose a fuel source:", fuel_options)
-fuel_index = fuel_sources.index(fuel_name)
-
 # General regression metrics: ____________________________________________________________
 
 st.subheader(f"{model_name} Regression Metrics")
@@ -81,27 +75,58 @@ st.subheader("Evaluation Metric Comparison (per Model)")
 
 flex = st.container(horizontal = True)
 
-flex.write(f"MAE")
-flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["mae"],
-              "Polynomial": results["Polynomial"]["overall_metrics"]["mae"],
-              "Ridge": results["Ridge"]["overall_metrics"]["mae"]})
+# outer keys = bars within each group (models), inner keys = x-axis (metrics)
+data1 = {
+    m: {
+        "MAE":  results[m]["overall_metrics"]["mae"],
+        "RMSE": results[m]["overall_metrics"]["rmse"],   # was "mape" in your snippet
+    }
+    for m in ["Linear", "Polynomial", "Ridge"]
+}
 
-flex.write(f"MAPE")
-flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["mape"],
-              "Polynomial": results["Polynomial"]["overall_metrics"]["mape"],
-              "Ridge": results["Ridge"]["overall_metrics"]["mape"]})
+data2 = {
+    m: {
+        "MAPE": results[m]["overall_metrics"]["mape"],
+    }
+    for m in ["Linear", "Polynomial", "Ridge"]
+}
 
-flex.write(f"RMSE")
-flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["rmse"],
-              "Polynomial": results["Polynomial"]["overall_metrics"]["rmse"],
-              "Ridge": results["Ridge"]["overall_metrics"]["rmse"]})
+flex.bar_chart(data1, stack=False)
+flex.bar_chart(data2, stack=False)
+
+# flex.write(f"MAE")
+# flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["mae"],
+#               "Polynomial": results["Polynomial"]["overall_metrics"]["mae"],
+#               "Ridge": results["Ridge"]["overall_metrics"]["mae"]})
+
+# flex.write(f"MAPE")
+# flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["mape"],
+#               "Polynomial": results["Polynomial"]["overall_metrics"]["mape"],
+#               "Ridge": results["Ridge"]["overall_metrics"]["mape"]})
+
+# flex.write(f"RMSE")
+# flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["rmse"],
+#               "Polynomial": results["Polynomial"]["overall_metrics"]["rmse"],
+#               "Ridge": results["Ridge"]["overall_metrics"]["rmse"]})
 
 # Show figure.
 # st.pyplot(fig)
 
+st.header(f"{model_name} Regression Model per Fuel source Metrics")
+
+# Options for fuel source.
+fuel_options = [fuel for fuel in fuel_sources if fuel != "Grand Total"]  # Do not include "Grand Total"
+fuel_name = st.pills("Choose a fuel source:", fuel_options, default=fuel_options[0])
+if fuel_name is None:
+    st.info("Please select a fuel source.")
+    st.stop()
+fuel_index = fuel_sources.index(fuel_name)
+
+
+
 # Fuel source-specific metrics: __________________________________________________________
 
-st.subheader(f"{fuel_name} Metrics for {model_name}")
+st.subheader(f"{fuel_name} Metrics")
 
 fuel_metrics = selected_model["individual_metrics"][fuel_name]
 
@@ -120,10 +145,8 @@ with colC:
 # Fuel source-specific plot: ____________________________________________________________
 
 years = X_test.flatten().astype(int)               # make years int
-
 actual = Y_test[:,fuel_index]                      # get actual and pred vals for fuel src 
 predicted = selected_model["preds"][:,fuel_index]
-
 st.subheader(f"Actual vs. Predicted {fuel_name} Power Generation")
 
 chart_data = []
@@ -146,8 +169,9 @@ chart = alt.Chart(alt.Data(values=chart_data)).mark_line(point=True).encode(    
         alt.Tooltip("Power Generation:Q", title="Power Generation", format="d")
     ]
 ).properties(
-    height=450  # set graph height to 450
+    height=450,  # set graph height to 450
+    title=fuel_name
 )
 
 # show chart
-st.altair_chart(chart, use_container_width = True)
+st.altair_chart(chart, use_container_width = True, key=f"chart_{fuel_name}")
