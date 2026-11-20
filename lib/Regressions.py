@@ -116,8 +116,3 @@ class RidgeRegression(object):
 
     def predict(self, X):
         return X.dot(self.weights) + self.bias
-
-# ARIMA Regression: _________________________________________________
-
-class ARIMARegression(object):
-    pass
