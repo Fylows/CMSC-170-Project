@@ -33,20 +33,20 @@ def RunModels():
 #      https://docs.streamlit.io/develop/quick-reference/cheat-sheet 
 #      https://docs.streamlit.io/develop/api-reference/charts/st.pyplot 
 
-st.title("Power Generation")
-st.write("Comparison of Regression Models")
+st.title("Power Generation of Philippine Fuel Sources")
+st.write("Predicting Power Generated per Year (in GWh) Using Regression Models")
 
 with st.spinner(text="Running regression models..."):
     results, X_test, Y_test, future_years, fuel_sources = RunModels()
 
 # Options for regression model.
-model_name = st.selectbox("Choose model", ["Linear", "Polynomial", "Ridge"])
+model_name = st.selectbox("Choose a model:", ["Linear", "Polynomial", "Ridge"])
 selected_model = results[model_name]
 
 # Options for fuel source.
 fuel_options = [fuel for fuel in fuel_sources if fuel != "Grand Total"]  # Do not include "Grand Total"
 
-fuel_name = st.selectbox("Choose fuel source", fuel_options)
+fuel_name = st.selectbox("Choose a fuel source:", fuel_options)
 fuel_index = fuel_sources.index(fuel_name)
 
 # Metrics: ______________________________________________________________________________
