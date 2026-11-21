@@ -2,7 +2,6 @@ from lib import utility
 from lib import Regressions
 
 import numpy as np
-import matplotlib       # for plotting
 import matplotlib.pyplot as mplot
 
 # Plot Comparison Graph: ___________________________________________________
