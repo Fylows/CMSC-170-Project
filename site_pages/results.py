@@ -66,13 +66,6 @@ with colC:
 
 st.subheader("Evaluation Metric Comparison (per Model)")
 
-# From main.py; plot Ccmparison uses matplotlib to graph the regression result.
-# fig = PlotComparison(
-#     results["Linear"]["overall_metrics"],
-#     results["Polynomial"]["overall_metrics"],
-#     results["Ridge"]["overall_metrics"]
-# )
-
 flex = st.container(horizontal = True)
 
 # outer keys = bars within each group (models), inner keys = x-axis (metrics)
@@ -93,24 +86,6 @@ data2 = {
 
 flex.bar_chart(data1, stack=False)
 flex.bar_chart(data2, stack=False)
-
-# flex.write(f"MAE")
-# flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["mae"],
-#               "Polynomial": results["Polynomial"]["overall_metrics"]["mae"],
-#               "Ridge": results["Ridge"]["overall_metrics"]["mae"]})
-
-# flex.write(f"MAPE")
-# flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["mape"],
-#               "Polynomial": results["Polynomial"]["overall_metrics"]["mape"],
-#               "Ridge": results["Ridge"]["overall_metrics"]["mape"]})
-
-# flex.write(f"RMSE")
-# flex.bar_chart({"Linear": results["Linear"]["overall_metrics"]["rmse"],
-#               "Polynomial": results["Polynomial"]["overall_metrics"]["rmse"],
-#               "Ridge": results["Ridge"]["overall_metrics"]["rmse"]})
-
-# Show figure.
-# st.pyplot(fig)
 
 st.header(f"{model_name} Regression Model per Fuel source Metrics")
 
@@ -175,3 +150,16 @@ chart = alt.Chart(alt.Data(values=chart_data)).mark_line(point=True).encode(    
 
 # show chart
 st.altair_chart(chart, use_container_width = True, key=f"chart_{fuel_name}")
+
+
+paginator_flex = st.container(horizontal=True,
+    horizontal_alignment="distribute",
+    vertical_alignment="center",     
+    gap="medium")
+
+if paginator_flex.button("Methodology Page"):
+    st.switch_page("site_pages/methodology.py")
+if paginator_flex.button("Discussion Page"):
+    st.switch_page("site_pages/discussion.py")
+
+
