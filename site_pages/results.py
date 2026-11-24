@@ -36,8 +36,7 @@ def RunModels():
 
 st.set_page_config(layout = "wide")
 
-st.title("Power Generation of Philippine Fuel Sources")
-st.markdown(f"## Predicting Power Generated per Year (in GWh) Using Regression Models")
+st.title("Results")
 
 with st.spinner(text="Running regression models..."):
     results, X_test, Y_test, future_years, fuel_sources = RunModels()
