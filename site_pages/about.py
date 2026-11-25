@@ -65,9 +65,9 @@ with col_description.container(border = True):
     st.markdown("""
                 - **Source**: [Department of Energy - "Power Generation by Fuel Source, 1990-2020"](https://data.gov.ph/index/public/dataset/Power%20Generation%20by%20Fuel%20Source,%201990-2020/mhb14dc0-8tio-af0u-6nac-euxrn6bz48rm)
                 - **Size**: Observations for **eight (8) fuel sources** (biomass, coal, geothermal, hydro, natural gas, oil-based, solar, and wind) across 
-                **31 years** (from 1990 to 2020).
+                **thirty-one (31) years** (from 1990 to 2020).
                 - **Features**: The **year**, with **polynomial regression** expanding it up to **degree 4** (x⁴).
-                - **Target**: **Power generated** per year, in **gigawatt-hours** (GWh), per fuel source.
+                - **Target**: The **power generated** per year, in **gigawatt-hours** (GWh), per fuel source.
                 """)
 
 # Dataset Preprocessing:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
@@ -75,7 +75,14 @@ with col_description.container(border = True):
 with col_preparation.container(border = True):
     st.subheader("Preprocessing Steps")
     st.markdown("""
-                *to be inserted* :3
+                1. **Parsing the `.csv`**: The file is read as **UTF-16** and **commas** (serving as thousands separators) are **removed**.
+                2. **Train-Test Split**: The **first twenty-four (24) years** (1990 to 2013) serve as **training years**, while the **latter seven (7)** 
+                (2014 to 2020) are used for **testing**.
+                3. **Scaling**: To keep gradient descent stable, the years are **standardized** in `main.py` (subtract the mean and divide by the standard
+                deviation) using the **training** ones. The same values are applied to the testing and future years.
+                4. **Non-negative Predictions**: Since power generation **cannot be negative**, negative predictions are **set to zero (0)**.
+                5. **Final Forecast**: After evaluation, the three models are **retrained on all thirty-one (31) years** to forecast the **next decade**
+                after the available data (2021 to 2030).
                 """)
 
 # _______________________________________________________________________________________
