@@ -44,22 +44,29 @@ class PolynomialRegression(object):
         self.degree = degree               
 
     def fit(self, X, y):
-        n, n_features = X.shape                 # get no. of years
+        n, n_features = X.shape                 # get no. of years, columns
         n_targets = y.shape[1]                  # get no. of fuel sources
 
-        X_poly = np.ones((n, self.degree), dtype = float)       # create array for polynomial feat.
+        # create 2D array with n rows and <degree> columns
+        X_poly = np.ones((n, self.degree), dtype = float)       # create table for polynomial feat.
 
+        # iterate from 1 to degree chosen (4)
         for i in range(self.degree):
-            X_poly[:, i] = X[:, 0] ** (i + 1)         # calculate x, x^2, x^3, ^4
+            X_poly[:, i] = X[:, 0] ** (i + 1)         # calculate for column i raised (i+1)
 
-        n_features = X_poly.shape[1]            # update no. of feat. after expansion
+        n_features = X_poly.shape[1]                  # update no. of feat. after expansion
 
+        # start all weights at 0
         self.weights = np.zeros((n_features, n_targets), dtype = float)
+        # start all bias at 0
         self.bias = np.zeros(n_targets, dtype = float)              # initialize bias
 
         # loop for n iterations
         for _ in range(self.iterations):
+            # predict using dot product with weights + bias
             Y_pred = X_poly.dot(self.weights) + self.bias       # predict w current weights and bias
+
+            # get error by checking difference of true value and prediction
             diff = y - Y_pred                                   # get error
 
             # weight and bias

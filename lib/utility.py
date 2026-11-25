@@ -1,13 +1,13 @@
 import numpy as np
 
+# Function for reading CSV file
 def parse_csv(file_path: str) -> np.array:
     with open(file_path, encoding='utf-16') as f:
         lines = f.readlines()
     
-    
     data = np.genfromtxt([
-        line.replace(',', '')
-        for line in lines[1:]
+        line.replace(',', '')                       # remove commas
+        for line in lines[1:]                       # remove first line
     ])
     
     # returns data as a np array
@@ -29,20 +29,25 @@ def Mean_absolute_error(Y_true: dict, Y_pred: dict) -> float:
     Returns:
       * float: The Mean Absolute Error.
     """
+
+    # Error handling for empty dictionaries
     if not Y_true or not Y_pred:
         raise ValueError("Input dictionaries must not be empty.")
 
     if set(Y_true.keys()) != set(Y_pred.keys()):
         raise ValueError("Input dictionaries must have the same keys.")
 
+    # Initial total of errors at 0
     total_error = 0.0
-    n = sum(len(v) for v in Y_true.values())
-  
+    n = sum(len(v) for v in Y_true.values())    # Sum of the length of every list
+
+    # 
     for k, v in Y_true.items():
         if k not in Y_pred:
             raise ValueError(f"Key '{k}' is missing in the predicted values.")
         total_error += sum(abs(y_true - y_pred) for y_true, y_pred in zip(v, Y_pred[k]))
 
+    # average error
     mae = total_error / n
     return mae
 
