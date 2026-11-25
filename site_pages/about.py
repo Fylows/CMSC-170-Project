@@ -8,9 +8,9 @@ st.title("Power Generation of Philippine Fuel Sources")
 st.markdown(f"## Predicting Power Generated per Year (in GWh) Using Regression Models")
 st.markdown(f"##### Made by Francis Miguel Rabulan, Ljiel Saplan, and Deigna Phoebe Marie Serrano")
 
-st.divider()
-
 # About Section: ________________________________________________________________________
+
+st.divider()
 
 st.header("About the Project")
 
@@ -40,19 +40,43 @@ with col_problem.container(border = True):
 with col_motivation.container(border = True):
     st.subheader("Motivation")
     st.markdown("""
-                Energy planning efforts in the country may be supported by getting an idea of how much each fuel source can generate in future
-                years. Since a source's trend may differ from another's, one model may not be apt for all of them.
+                **Energy planning efforts** in the country may be **supported** by getting an idea of **how much** each fuel source can generate in 
+                **future years**. Since a source's trend **may differ** from another's, one model may **not be apt** for all of them.
 
-                Thus, this project compares three regression models with varying flexibility to see where each one works well and fails, with
-                varying factors considered alongside doing these (such as gradient descent and regularization).
+                Thus, this project **compares three regression models** with varying flexibility to see where each one **works well and fails**, with
+                varying factors considered alongside doing these (such as **gradient descent** and **regularization**).
 
-                It is important to note that these only extend past trends based on DOE's data, and do not account for existing policies, prices, or 
-                power plants; this project is solely a comparison of linear, polynomial, and ridge regression.
+                It is important to note that these **only extend past trends** based on DOE's data, and **do not account for existing policies, prices, or 
+                power plants**; this project is **solely a comparison** of linear, polynomial, and ridge regression.
                 """)
 
 # Dataset Description: __________________________________________________________________
 
-# * to be added :3 *
+st.divider()
+
+st.header("Dataset Description")
+
+col_description, col_preparation = st.columns(2)
+
+# Dataset Information Statement:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+with col_description.container(border = True):
+    st.subheader("Information")
+    st.markdown("""
+                - **Source**: [Department of Energy - "Power Generation by Fuel Source, 1990-2020"](https://data.gov.ph/index/public/dataset/Power%20Generation%20by%20Fuel%20Source,%201990-2020/mhb14dc0-8tio-af0u-6nac-euxrn6bz48rm)
+                - **Size**: Observations for **eight (8) fuel sources** (biomass, coal, geothermal, hydro, natural gas, oil-based, solar, and wind) across 
+                **31 years** (from 1990 to 2020).
+                - **Features**: The **year**, with **polynomial regression** expanding it up to **degree 4** (x⁴).
+                - **Target**: **Power generated** per year, in **gigawatt-hours** (GWh), per fuel source.
+                """)
+
+# Dataset Preprocessing:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+with col_preparation.container(border = True):
+    st.subheader("Preprocessing Steps")
+    st.markdown("""
+                *to be inserted* :3
+                """)
 
 # _______________________________________________________________________________________
 
