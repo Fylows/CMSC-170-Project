@@ -43,7 +43,6 @@ st.divider()
 st.header("Conclusion")
 
 col_findings, col_interpretation = st.columns(2)
-col_limitations, col_application = st.columns(2)
 
 # Findings: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
@@ -59,17 +58,7 @@ with col_findings.container(border = True):
                 """)
 
 # Limitations:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-with col_limitations.container(border = True):
-    st.subheader("Limitations")
-    st.markdown("""
-                Since the three models were based around **seven (7) test years** per fuel source (from 2014 to 2020), 
-                **results may be noisy**. **Hyperparameters** such as α, learning rate, and number of iterations are also **fixed**. 
-                Additionally, as mentioned in the About section, the project only has the **years** in the .csv as **input**, 
-                and **does not** take into account **other external factors**.
-                """)
-
 # Interpretation: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
 with col_interpretation.container(border = True):
     st.subheader("MAPE Limitations")
     st.markdown("""
@@ -82,6 +71,19 @@ with col_interpretation.container(border = True):
 
 
 # Conclusion: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+with st.container(border = True):
+    st.subheader("Conclusion")
+    st.markdown("""
+                Since the three models were based around **seven (7) test years** per fuel source (from 2014 to 2020), 
+                **results may be noisy**. **Hyperparameters** such as α, learning rate, and number of iterations are also **fixed**. 
+                Additionally, as mentioned in the About section, the project only has the **years** in the .csv as **input**, 
+                and **does not** take into account **other external factors**.
+                """)
+
+    st.markdown("""
+                Further implementations may have the aforementioned **hyperparameters** 
+                (as well as other ones like the **degree** in polynomial regression) **tuned** as opposed to being fixed.
+                """)
 
 
 
