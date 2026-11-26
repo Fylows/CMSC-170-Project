@@ -4,6 +4,8 @@ from lib import Regressions
 import numpy as np
 import matplotlib.pyplot as mplot
 
+iterations=10000
+learning_rate = 0.001
 # Plot Comparison Graph: ___________________________________________________
 
 def PlotComparison(linear, polynomial, ridge):
@@ -126,7 +128,7 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     X_train_scaled = (X_train - mean) / std                                       # Scale training and testing data for gradient descent convergence.
     X_test_scaled = (X_test - mean) / std
         
-    final = Regressions.LinearRegression()                                        # Create model -> train on scaled training data -> predict.
+    final = Regressions.LinearRegression(iterations=iterations, learning_rate=learning_rate)                                        # Create model -> train on scaled training data -> predict.
     final.fit(X_train_scaled, Y_train)                       
     
     preds = final.predict(X_test_scaled)    
@@ -149,7 +151,7 @@ def Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     X_all_scaled = (X_all - mean_all) / std_all                            # Scale data and future years again.
     future_years_scaled_all = (future_years - mean_all) / std_all
 
-    final_all = Regressions.LinearRegression()                             # Create model -> train on scaled data -> predict.
+    final_all = Regressions.LinearRegression(iterations=iterations, learning_rate=learning_rate)                             # Create model -> train on scaled data -> predict.
     final_all.fit(X_all_scaled, Y_all)   
 
     future_preds_all = final_all.predict(future_years_scaled_all)
@@ -170,7 +172,7 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
     X_train_scaled = (X_train - mean) / std                         
     X_test_scaled = (X_test - mean) / std 
     
-    final = Regressions.PolynomialRegression(degree = degree)
+    final = Regressions.PolynomialRegression(degree = degree,iterations=iterations, learning_rate=learning_rate)
     final.fit(X_train_scaled, Y_train)
 
     preds = final.predict(X_test_scaled)
@@ -193,7 +195,7 @@ def Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, deg
     X_all_scaled = (X_all - mean_all) / std_all                    
     future_years_scaled_all = (future_years - mean_all) / std_all
 
-    final_all = Regressions.PolynomialRegression(degree=degree)                     
+    final_all = Regressions.PolynomialRegression(degree=degree,iterations=iterations, learning_rate=learning_rate)                     
     final_all.fit(X_all_scaled, Y_all)   
 
     future_preds_all = final_all.predict(future_years_scaled_all)
@@ -218,7 +220,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     X_train_scaled = (X_train - mean) / std
     X_test_scaled  = (X_test - mean) / std
         
-    final = Regressions.RidgeRegression(alpha=0.001)                              # hardcoded alpha for now, can be changed later
+    final = Regressions.RidgeRegression(alpha=0.001,iterations=iterations, learning_rate=learning_rate)                              # hardcoded alpha for now, can be changed later
     final.fit(X_train_scaled, Y_train)
 
     preds = final.predict(X_test_scaled)
@@ -241,7 +243,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years):
     X_all_scaled = (X_all - mean_all) / std_all                    
     future_years_scaled_all = (future_years - mean_all) / std_all
 
-    final_all = Regressions.RidgeRegression(alpha=0.001)                     
+    final_all = Regressions.RidgeRegression(alpha=0.001,iterations=iterations, learning_rate=learning_rate)                     
     final_all.fit(X_all_scaled, Y_all)   
 
     future_preds_all = final_all.predict(future_years_scaled_all)
