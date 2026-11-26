@@ -1,7 +1,5 @@
 import streamlit as st
 
-import streamlit as st
-
 paginator_flex = st.container(horizontal=True,
     horizontal_alignment="distribute",
     vertical_alignment="center",     
