@@ -1,6 +1,6 @@
 app = app.py
 
-all:build
+all: build
 
 dev:
 	streamlit run $(app) --server.runOnSave true

@@ -1,3 +1,4 @@
-/lib/pycache/*
-/frontend/pycache/*
+/lib/__pycache__/*
+/frontend/__pycache__/*
+/__pycache__/*
 /.venv

@@ -37,6 +37,7 @@ def RunModels():
 st.set_page_config(layout = "wide")
 
 st.title("Results")
+st.write("This section shows the results of the models after they've been trained, and tested on the 7 years in our dataset.")
 
 with st.spinner(text="Running regression models..."):
     results, X_test, Y_test, future_years, fuel_sources = RunModels()
