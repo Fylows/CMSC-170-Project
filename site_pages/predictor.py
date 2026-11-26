@@ -13,24 +13,26 @@ def LoadCached():
     return LoadData()
 
 @st.cache_data
-def RunModels(future_years):
-    X_train, X_test, Y_train, Y_test, _, fuel_sources = LoadCached()
+def RunModels():
+    X_train, X_test, Y_train, Y_test, fuel_sources = LoadCached()
 
-    # Run regression models.
-    linear_results = Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
-    polynomial_results = Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
-    ridge_results = Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
+    linear_results = Linear(X_train, Y_train, X_test, Y_test, fuel_sources)
+    polynomial_results = Polynomial(
+        X_train, Y_train, X_test, Y_test, fuel_sources, degree=4
+    )
+    ridge_results = Ridge(X_train, Y_train, X_test, Y_test, fuel_sources)
 
-    # Put models' results in dictionary.
-    results = {"Linear": linear_results, 
-               "Polynomial": polynomial_results, 
-               "Ridge": ridge_results}
+    results = {
+        "Linear": linear_results,
+        "Polynomial": polynomial_results,
+        "Ridge": ridge_results
+    }
 
     return results, fuel_sources
 
 st.header("Try it yourself!")
 model = st.pills("Choose a model:", ["Linear", "Polynomial", "Ridge"], default="Linear")
-if model == []:
+if model == [] or model == None:
     st.info("Select a model")
     st.stop()
 
@@ -55,8 +57,14 @@ if start_yr > end_yr:
     st.stop()
 
 years = np.arange(start_yr, end_yr + 1).reshape(-1, 1)   # inclusive, shape (n, 1)
-results, fuel_sources = RunModels(years)
-predictions = results[model]["future_preds_all"]    # (n_years, n_fuel_sources)
+results, fuel_sources = RunModels()
+selected_model = results[model]
+
+years_scaled = (years - selected_model["mean"]) / selected_model["std"]
+
+predictions = selected_model["model"].predict(years_scaled)
+predictions = np.maximum(predictions, 0)
+
 year_list = years.ravel()
 
 chart_data = []

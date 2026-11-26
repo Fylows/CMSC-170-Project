@@ -45,7 +45,14 @@ with col_interpretation.container(border = True):
                 """)
 
 # Limitations:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
+with col_limitations.container(border = True):
+    st.subheader("Limitations")
+    st.markdown("""
+                Since the three models were based around **seven (7) test years** per fuel source (from 2014 to 2020), 
+                **results may be noisy**. **Hyperparameters** such as α, learning rate, and number of iterations are also **fixed**. 
+                Additionally, as mentioned in the About section, the project only has the **years** in the .csv as **input**, 
+                and **does not** take into account **other external factors**.
+                """)
 
 
 # Conclusion: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _

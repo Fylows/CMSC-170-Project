@@ -12,17 +12,15 @@ from main import Linear, Polynomial, Ridge, LoadData, PlotComparison
 # RunModels(): __________________________________________________________________________
 
 @st.cache_data
-def RunModels(future_years=None):
-    X_train, X_test, Y_train, Y_test, default_years, fuel_sources = LoadData()
-    if future_years is None:
-        future_years = default_years
+def RunModels():
+    X_train, X_test, Y_train, Y_test, fuel_sources = LoadData()
 
-    linear_results = Linear(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
-    polynomial_results = Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, future_years, degree=4)
-    ridge_results = Ridge(X_train, Y_train, X_test, Y_test, fuel_sources, future_years)
+    linear_results = Linear(X_train, Y_train, X_test, Y_test, fuel_sources)
+    polynomial_results = Polynomial(X_train, Y_train, X_test, Y_test, fuel_sources, degree=4)
+    ridge_results = Ridge(X_train, Y_train, X_test, Y_test, fuel_sources)
 
     results = {"Linear": linear_results, "Polynomial": polynomial_results, "Ridge": ridge_results}
-    return results, X_train, X_test, Y_train, Y_test, default_years, fuel_sources
+    return results, X_train, X_test, Y_train, Y_test, fuel_sources
 
 # _______________________________________________________________________________________
 
@@ -38,30 +36,27 @@ st.title("Results")
 st.write("This section shows the results of the models after they've been trained, and tested on the 7 years in our dataset.")
 
 with st.spinner(text="Running regression models..."):
-    results, X_train, X_test, Y_train, Y_test, years, fuel_sources = RunModels()
-    train_results, *_ = RunModels(X_train)
+    results, X_train, X_test, Y_train, Y_test, fuel_sources = RunModels()
+
 
 tab_training, tab_testing= st.tabs(["Training", "Testing"])
 
 with tab_training:
     model_name = st.selectbox("Choose a model:", ["Linear", "Polynomial", "Ridge"], key="model_select_results_3")
-    train_preds = train_results[model_name]["future_preds_all"]
-
+    selected_model = results[model_name]
     # Overall metrics, pooled over all fuel sources except Grand Total.
-    # Change this to match how main.py computes overall_metrics.
     cols = [i for i, f in enumerate(fuel_sources) if f != "Grand Total"]
-    overall = train_results[model_name]["overall_metrics"]
-
+    
     st.subheader(f"{model_name} Regression Metrics")
     colA, colB, colC = st.columns(3)
-    colA.metric("MAE", f"{overall['mae']:.3f}")
-    colB.metric("MAPE", f"{overall['mape']:.3f}%")
-    colC.metric("RMSE", f"{overall['rmse']:.3f}")
+    colA.metric("MAE", f"{selected_model["train_metrics"]['mae']:.3f}")
+    colB.metric("MAPE", f"{selected_model["train_metrics"]['mape']:.3f}%")
+    colC.metric("RMSE", f"{selected_model["train_metrics"]['rmse']:.3f}")
 
     st.subheader("Evaluation Metric Comparison (per Model)")
     flex = st.container(horizontal=True)
     train_overall = {
-        m: train_results[m]['overall_metrics'] for m in ["Linear", "Polynomial", "Ridge"]
+        m: results[m]["train_metrics"] for m in ["Linear", "Polynomial", "Ridge"]
     }
     flex.bar_chart({m: {"MAE": v["mae"], "RMSE": v["rmse"]} for m, v in train_overall.items()}, stack=False)
     flex.bar_chart({m: {"MAPE": v["mape"]} for m, v in train_overall.items()}, stack=False)
@@ -76,9 +71,9 @@ with tab_training:
         fuel_index = fuel_sources.index(fuel_name)
         train_years = X_train.flatten().astype(int)
         actual = Y_train[:, fuel_index]
-        predicted = train_preds[:, fuel_index]
+        predicted = selected_model['train_preds'][:, fuel_index]
 
-        fm = train_results[model_name]['individual_metrics'][fuel_name]
+        fm = selected_model['individual_metrics'][fuel_name]
         st.subheader(f"{fuel_name} Metrics")
         colA, colB, colC = st.columns(3)
         colA.metric("MAE", f"{fm['mae']:.3f}")
@@ -121,19 +116,19 @@ with tab_testing:
 
     # General regression metrics: ____________________________________________________________
 
-    st.subheader(f"{model_name} Regression Metrics")
-
+    st.header(f"{model_name} Regression Metrics")
+    st.subheader("Training Metrics")
     colA, colB, colC = st.columns(3)
 
     # Print errors in columns.
     with colA:
-        st.metric("MAE", f"{selected_model['overall_metrics']['mae']:.3f}")
+        st.metric("MAE", f"{selected_model['train_metrics']['mae']:.3f}")
 
     with colB:
-        st.metric("MAPE", f"{selected_model['overall_metrics']['mape']:.3f}%")
+        st.metric("MAPE", f"{selected_model['train_metrics']['mape']:.3f}%")
 
     with colC:
-        st.metric("RMSE", f"{selected_model['overall_metrics']['rmse']:.3f}")
+        st.metric("RMSE", f"{selected_model['train_metrics']['rmse']:.3f}")
 
     # Regression models comparison: _________________________________________________________
 
@@ -144,15 +139,52 @@ with tab_testing:
     # outer keys = bars within each group (models), inner keys = x-axis (metrics)
     data1 = {
         m: {
-            "MAE":  results[m]["overall_metrics"]["mae"],
-            "RMSE": results[m]["overall_metrics"]["rmse"],   # was "mape" in your snippet
+            "MAE":  results[m]["train_metrics"]["mae"],
+            "RMSE": results[m]["train_metrics"]["rmse"],   
         }
         for m in ["Linear", "Polynomial", "Ridge"]
     }
 
     data2 = {
         m: {
-            "MAPE": results[m]["overall_metrics"]["mape"],
+            "MAPE": results[m]["train_metrics"]["mape"],
+        }
+        for m in ["Linear", "Polynomial", "Ridge"]
+    }
+
+    flex.bar_chart(data1, stack=False)
+    flex.bar_chart(data2, stack=False)
+
+
+    st.subheader("Testing Metrics")
+    colA, colB, colC = st.columns(3)
+
+    # Print errors in columns.
+    with colA:
+        st.metric("MAE", f"{selected_model['test_metrics']['mae']:.3f}")
+
+    with colB:
+        st.metric("MAPE", f"{selected_model['test_metrics']['mape']:.3f}%")
+
+    with colC:
+        st.metric("RMSE", f"{selected_model['test_metrics']['rmse']:.3f}")
+
+    # Regression models comparison: _________________________________________________________
+
+    st.subheader("Evaluation Metric Comparison (per Model)")
+    flex = st.container(horizontal = True)
+    # outer keys = bars within each group (models), inner keys = x-axis (metrics)
+    data1 = {
+        m: {
+            "MAE":  results[m]['test_metrics']["mae"],
+            "RMSE": results[m]['test_metrics']["rmse"],
+        }
+        for m in ["Linear", "Polynomial", "Ridge"]
+    }
+
+    data2 = {
+        m: {
+            "MAPE": results[m]['test_metrics']["mape"],
         }
         for m in ["Linear", "Polynomial", "Ridge"]
     }
@@ -194,7 +226,7 @@ with tab_testing:
 
     years = X_test.flatten().astype(int)               # make years int
     actual = Y_test[:,fuel_index]                      # get actual and pred vals for fuel src 
-    predicted = selected_model["preds"][:,fuel_index]
+    predicted = selected_model["test_preds"][:,fuel_index]
     st.subheader(f"Actual vs. Predicted {fuel_name} Power Generation")
 
     chart_data = []
@@ -223,7 +255,6 @@ with tab_testing:
 
     # show chart
     st.altair_chart(chart, use_container_width = True, key=f"chart_{fuel_name}")
-
 
 paginator_flex = st.container(horizontal=True,
     horizontal_alignment="distribute",
