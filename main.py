@@ -79,7 +79,7 @@ def GetOverallMetrics(keep, fuel_sources, y, preds):
         {fuel_sources[i]: y[:, i] for i in keep},
         {fuel_sources[i]: preds[:, i] for i in keep}
     )
-
+    
     overall_metrics["mape"] = mape
 
     # Get root mean sqd. error.
@@ -254,7 +254,7 @@ def Ridge(X_train, Y_train, X_test, Y_test, fuel_sources):
     X_train_scaled = (X_train - mean) / std
     X_test_scaled  = (X_test - mean) / std
         
-    final = Regressions.RidgeRegression(alpha=0.001,iterations=iterations, learning_rate=learning_rate)                              # hardcoded alpha for now, can be changed later
+    final = Regressions.RidgeRegression(alpha=1,iterations=iterations, learning_rate=learning_rate)                              # hardcoded alpha for now, can be changed later
     final.fit(X_train_scaled, Y_train)
 
     keep = [i for i, s in enumerate(fuel_sources) if s != "Grand Total"]

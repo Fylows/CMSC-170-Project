@@ -40,7 +40,6 @@ with st.spinner(text="Running regression models..."):
 
 
 tab_training, tab_testing= st.tabs(["Training", "Testing"])
-
 with tab_training:
     model_name = st.selectbox("Choose a model:", ["Linear", "Polynomial", "Ridge"], key="model_select_results_3")
     selected_model = results[model_name]
