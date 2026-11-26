@@ -117,3 +117,30 @@ def Root_mean_squared_error(Y_true: dict, Y_pred: dict) -> float:
 
     rmse = np.sqrt(total_error / n)
     return rmse
+
+
+def CheckMAPE(Y_true, Y_pred, fuel_sources, keep):
+
+    print("\n========== MAPE DIAGNOSTICS ==========")
+
+    for i in keep:
+
+        actual = Y_true[:, i]
+        predicted = Y_pred[:, i]
+
+        mask = actual != 0
+
+        if not np.any(mask):
+            continue
+
+        percentage_errors = (
+            np.abs(actual[mask] - predicted[mask]) /
+            np.abs(actual[mask])
+        ) * 100
+
+        print(f"\nFuel Source: {fuel_sources[i]}")
+        print(f"Minimum Actual: {actual.min():.4f}")
+        print(f"Mean Actual: {actual.mean():.4f}")
+        print(f"Maximum Actual: {actual.max():.4f}")
+        print(f"MAPE: {percentage_errors.mean():.2f}%")
+        print(f"Maximum Percentage Error: {percentage_errors.max():.2f}%")
