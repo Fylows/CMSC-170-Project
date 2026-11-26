@@ -48,9 +48,9 @@ with tab_training:
     
     st.subheader(f"{model_name} Regression Metrics")
     colA, colB, colC = st.columns(3)
-    colA.metric("MAE", f"{selected_model["train_metrics"]['mae']:.3f}")
-    colB.metric("MAPE", f"{selected_model["train_metrics"]['mape']:.3f}%")
-    colC.metric("RMSE", f"{selected_model["train_metrics"]['rmse']:.3f}")
+    colA.metric("MAE", f"{selected_model['train_metrics']['mae']:.3f}")
+    colB.metric("MAPE", f"{selected_model['train_metrics']['mape']:.3f}%")
+    colC.metric("RMSE", f"{selected_model['train_metrics']['rmse']:.3f}")
 
     st.subheader("Evaluation Metric Comparison (per Model)")
     flex = st.container(horizontal=True)
