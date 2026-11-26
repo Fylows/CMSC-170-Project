@@ -1,6 +1,5 @@
 import streamlit as st
 
-
 st.set_page_config(page_title="CMSC 170 Project", page_icon="🤖", layout="wide")
 
 pg = st.navigation([
@@ -12,4 +11,5 @@ pg = st.navigation([
     st.Page("site_pages/references.py",  title="References"),
 
 ])
+
 pg.run()
