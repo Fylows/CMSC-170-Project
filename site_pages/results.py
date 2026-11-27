@@ -46,7 +46,7 @@ with tab_training:
     # Overall metrics, pooled over all fuel sources except Grand Total.
     cols = [i for i, f in enumerate(fuel_sources) if f != "Grand Total"]
     
-    st.subheader(f"{model_name} Regression Metrics")
+    st.subheader(f"{model_name} Regression Training Metrics")
     colA, colB, colC = st.columns(3)
     colA.metric("MAE", f"{selected_model['train_metrics']['mae']:.3f}")
     colB.metric("MAPE", f"{selected_model['train_metrics']['mape']:.3f}%")
@@ -115,47 +115,7 @@ with tab_testing:
 
     # General regression metrics: ____________________________________________________________
 
-    st.header(f"{model_name} Regression Metrics")
-    st.subheader("Training Metrics")
-    colA, colB, colC = st.columns(3)
-
-    # Print errors in columns.
-    with colA:
-        st.metric("MAE", f"{selected_model['train_metrics']['mae']:.3f}")
-
-    with colB:
-        st.metric("MAPE", f"{selected_model['train_metrics']['mape']:.3f}%")
-
-    with colC:
-        st.metric("RMSE", f"{selected_model['train_metrics']['rmse']:.3f}")
-
-    # Regression models comparison: _________________________________________________________
-
-    st.subheader("Evaluation Metric Comparison (per Model)")
-
-    flex = st.container(horizontal = True)
-
-    # outer keys = bars within each group (models), inner keys = x-axis (metrics)
-    data1 = {
-        m: {
-            "MAE":  results[m]["train_metrics"]["mae"],
-            "RMSE": results[m]["train_metrics"]["rmse"],   
-        }
-        for m in ["Linear", "Polynomial", "Ridge"]
-    }
-
-    data2 = {
-        m: {
-            "MAPE": results[m]["train_metrics"]["mape"],
-        }
-        for m in ["Linear", "Polynomial", "Ridge"]
-    }
-
-    flex.bar_chart(data1, stack=False)
-    flex.bar_chart(data2, stack=False)
-
-
-    st.subheader("Testing Metrics")
+    st.subheader(f"{model_name} Regression Testing Metrics")
     colA, colB, colC = st.columns(3)
 
     # Print errors in columns.
@@ -200,8 +160,6 @@ with tab_testing:
         st.info("Please select a fuel source.")
         st.stop()
     fuel_index = fuel_sources.index(fuel_name)
-
-
 
     # Fuel source-specific metrics: __________________________________________________________
 
