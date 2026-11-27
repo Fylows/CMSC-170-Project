@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.title("Discussion")
-st.write("This section discusses the results of the regression models' run.")
+st.write("This section elaborates upon the results of the regression models' run.")
 
 # Discussion: ___________________________________________________________________________
 
