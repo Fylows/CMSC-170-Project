@@ -5,8 +5,8 @@ st.set_page_config(
 )
 
 st.title("Power Generation of Philippine Fuel Sources")
-st.markdown(f"## Predicting Power Generated per Year (in GWh) Using Regression Models")
-st.markdown(f"##### Made by Francis Miguel Rabulan, Ljiel Saplan, and Deigna Phoebe Marie Serrano")
+st.markdown("## Predicting Power Generated per Year (in GWh) Using Regression Models")
+st.markdown("Made by **Francis Miguel Rabulan**, **Ljiel Saplan**, and **Deigna Phoebe Marie Serrano**")
 
 # About Section: ________________________________________________________________________
 
@@ -31,8 +31,8 @@ with col_problem.container(border = True):
                 - Compares them using evaluation metrics: **MAE**, **MAPE**, and **RMSE** (overall and per fuel source); and
                 - Forecasts generation for **2021 to 2030**.
 
-                The main objective of this project is to determine which of the three models **predicts best overall**, and whether the best 
-                changes **depending on the fuel source**.
+                The main objective of this project is to determine which of the three models **predicts best overall**, and whether the **best 
+                changes** depending on the fuel source.
                 """)
 
 # Motivation: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -40,14 +40,14 @@ with col_problem.container(border = True):
 with col_motivation.container(border = True):
     st.subheader("Motivation")
     st.markdown("""
-                **Energy planning efforts** in the country may be **supported** by getting an idea of **how much** each fuel source can generate in 
+                **Energy planning efforts** in the country may be supported by getting an idea of **how much** each fuel source can generate in 
                 **future years**. Since a source's trend **may differ** from another's, one model may **not be apt** for all of them.
 
-                Thus, this project **compares three regression models** with varying flexibility to see where each one **works well and fails**, with
-                varying factors considered alongside doing these (such as **gradient descent** and **regularization**).
+                Thus, this project compares three regression models with **varying flexibility** to see where each one works well and fails, with
+                varying factors considered alongside doing these (such as gradient descent and regularization).
 
-                It is important to note that these **only extend past trends** based on DOE's data, and **do not account for existing policies, prices, or 
-                power plants**; this project is **solely a comparison** of linear, polynomial, and ridge regression.
+                It is important to note that these **only extend past trends** based on DOE's data, and **do not** account for existing policies, prices, or 
+                power plants; this project is **solely a comparison** of linear, polynomial, and ridge regression.
                 """)
 
 # Dataset Description: __________________________________________________________________
@@ -75,14 +75,14 @@ with col_description.container(border = True):
 with col_preparation.container(border = True):
     st.subheader("Preprocessing Steps")
     st.markdown("""
-                1. **Parsing the `.csv`**: The file is read as **UTF-16** and **commas** (serving as thousands separators) are **removed**.
+                1. **Parsing the `.csv`**: The file is read as **UTF-16** and commas (serving as thousands separators) are removed.
                 2. **Train-Test Split**: The **first twenty-four (24) years** (1990 to 2013) serve as **training years**, while the **latter seven (7)** 
                 (2014 to 2020) are used for **testing**.
                 3. **Scaling**: To keep gradient descent stable, the years are **standardized** in `main.py` (subtract the mean and divide by the standard
-                deviation) using the **training** ones. The same values are applied to the testing and future years.
-                4. **Non-negative Predictions**: Since power generation **cannot be negative**, negative predictions are **set to zero (0)**.
-                5. **Final Forecast**: After evaluation, the three models are **retrained on all thirty-one (31) years** to forecast the **next decade**
-                after the available data (2021 to 2030).
+                deviation) using the training ones. The same values are applied to the testing and future years.
+                4. **Non-negative Predictions**: Since power generation **cannot** be negative, negative predictions are **set to zero (0)**.
+                5. **Final Forecast**: After evaluation, the three models are **retrained** to forecast the **next decade** after the available data (2021 
+                to 2030).
                 """)
 
 # _______________________________________________________________________________________
