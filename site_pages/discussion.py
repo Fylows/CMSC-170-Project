@@ -47,8 +47,6 @@ st.write("This section reiterates and established what was found and could be im
 
 col_findings, col_interpretation = st.columns(2)
 
-# Findings: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
 with col_findings.container(border = True):
     st.subheader("Findings")
     st.markdown("""
@@ -59,8 +57,6 @@ with col_findings.container(border = True):
                 best results for coal, solar, and wind sources; polynomial for biomass and hydro; and ridge
                 for geothermal, natural gas, and oil-based.
                 """)
-
-# Limitations:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 with col_interpretation.container(border = True):
     st.subheader("MAPE Limitations")
@@ -73,8 +69,6 @@ with col_interpretation.container(border = True):
                 Therefore, MAPE alone **does not** accurately represent the overall performance of our models. MAE and RMSE 
                 provide additional context.
                 """)
-    
-# Conclusion: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 with st.container(border = True):
     st.subheader("Conclusion")
