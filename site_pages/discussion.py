@@ -13,17 +13,17 @@ col_linear, col_polynomial = st.columns(2)
 with col_linear.container(border = True):
     st.subheader("Linear Regression")
     st.markdown("""
-                Linear Regression generally performed the best out of all the three models, achieving a test MAE of approximately 4,024 and a test RMSE of 6,665.
+                Linear regression generally performed the best out of all the three models, achieving a test MAE of approximately 4,024 and a test RMSE of 6,665.
                 However, its main limitation is that **it assumes a linear relationship between the year and electricity generation**. 
                 
                 This makes it difficult to capture sudden increases, decreases, or changing trends in certain fuel sources.
-                For example, Natural Gas generation increased dramatically around 2001–2002. A straight-line model struggles to represent this transition accurately.
+                For example, natural gas generation increased dramatically around 2001-2002. A straight-line model struggles to represent this transition accurately.
                 """)
     
 with col_polynomial.container(border = True):
     st.subheader("Polynomial Regression")
     st.markdown("""
-                Polynomial Regression achieved the lowest training MAE and RMSE among the three models. However, its testing performance was considerably worse.
+                Polynomial regression achieved the lowest training MAE and RMSE among the three models. However, its testing performance was considerably worse.
                 
                 This suggests that the model may be overfitting the training data. Because we used a fourth-degree polynomial, the model can capture more complex patterns, but it can also become too closely fitted to historical fluctuations.
                 """)
@@ -31,11 +31,10 @@ with col_polynomial.container(border = True):
 with st.container(border = True):
     st.subheader("Ridge Regression")
     st.markdown("""
-    Ridge Regression produced almost identical results to Linear Regression, with a small alpha value of 0.001.
+    Ridge regression produced almost identical results to linear regression, with a small alpha value of 0.001.
     But upon adjusting it to 1, our training errors increased slightly, but our testing MAE improved from approximately 4,024 to 3,895, while testing MAPE decreased from 57.98% to 55.58%.
 
     This suggests that stronger regularization helped the model generalize slightly better according to these metrics. However, testing RMSE increased from approximately 6,665 to 6,896, indicating that some larger prediction errors may still be present.
-        
     """)
 
 # Conclusion: ___________________________________________________________________________
@@ -50,12 +49,12 @@ col_findings, col_interpretation = st.columns(2)
 with col_findings.container(border = True):
     st.subheader("Findings")
     st.markdown("""
-                Comparing the three regression models altogether, linear and ridge resulted in **almost identical
+                Comparing the three regression models altogether, linear and ridge resulted in **close
                 evaluation metrics**. Both outperformed polynomial in terms of their **overall MAE and RMSE 
-                values**, with said metrics being around **4,024 GWh** and **6,664 GWh** respectively. When it came down
-                to the individual fuel sources, however, the **best model varied**: linear regression gives the 
-                best results for coal, solar, and wind sources; polynomial for biomass and hydro; and ridge
-                for geothermal, natural gas, and oil-based.
+                values**, with said metrics having a difference of only around **25 GWh** and **26 GWh** respectively. 
+                When it came down to the individual fuel sources, however, the **best model varied** (in terms of MAE): 
+                linear regression gives the best results for coal, solar, and wind sources; polynomial for biomass and 
+                hydro; and ridge for geothermal, natural gas, and oil-based.
                 """)
 
 with col_interpretation.container(border = True):
