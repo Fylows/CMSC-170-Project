@@ -30,7 +30,7 @@ def RunModels():
 
     return results, fuel_sources
 
-st.header("Try it yourself!")
+st.title("Try it yourself!")
 model = st.pills("Choose a model:", ["Linear", "Polynomial", "Ridge"], default="Linear")
 if model == [] or model == None:
     st.info("Select a model")
