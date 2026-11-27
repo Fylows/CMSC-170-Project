@@ -49,8 +49,8 @@ with tab_training:
     st.subheader(f"{model_name} Regression Training Metrics")
     colA, colB, colC = st.columns(3)
     colA.metric("MAE", f"{selected_model['train_metrics']['mae']:.3f}")
-    colB.metric("MAPE", f"{selected_model['train_metrics']['mape']:.3f}%")
-    colC.metric("RMSE", f"{selected_model['train_metrics']['rmse']:.3f}")
+    colB.metric("RMSE", f"{selected_model['train_metrics']['rmse']:.3f}")
+    colC.metric("MAPE", f"{selected_model['train_metrics']['mape']:.3f}%")
 
     st.subheader("Evaluation Metric Comparison (per Model)")
     flex = st.container(horizontal=True)
@@ -76,8 +76,8 @@ with tab_training:
         st.subheader(f"{fuel_name} Metrics")
         colA, colB, colC = st.columns(3)
         colA.metric("MAE", f"{fm['mae']:.3f}")
-        colB.metric("MAPE", f"{fm['mape']:.3f}%")
-        colC.metric("RMSE", f"{fm['rmse']:.3f}")
+        colB.metric("RMSE", f"{fm['rmse']:.3f}")
+        colC.metric("MAPE", f"{fm['mape']:.3f}%")
 
         # Fuel source-specific plot: ____________________________________________________________
 
@@ -123,10 +123,10 @@ with tab_testing:
         st.metric("MAE", f"{selected_model['test_metrics']['mae']:.3f}")
 
     with colB:
-        st.metric("MAPE", f"{selected_model['test_metrics']['mape']:.3f}%")
+        st.metric("RMSE", f"{selected_model['test_metrics']['rmse']:.3f}")
 
     with colC:
-        st.metric("RMSE", f"{selected_model['test_metrics']['rmse']:.3f}")
+        st.metric("MAPE", f"{selected_model['test_metrics']['mape']:.3f}%")
 
     # Regression models comparison: _________________________________________________________
 
@@ -174,10 +174,10 @@ with tab_testing:
         st.metric("MAE", f"{fuel_metrics['mae']:.3f}")
 
     with colB:
-        st.metric("MAPE", f"{fuel_metrics['mape']:.3f}%")
+        st.metric("RMSE", f"{fuel_metrics['rmse']:.3f}")
 
     with colC:
-        st.metric("RMSE", f"{fuel_metrics['rmse']:.3f}")
+        st.metric("MAPE", f"{fuel_metrics['mape']:.3f}%")
 
     # Fuel source-specific plot: ____________________________________________________________
 
