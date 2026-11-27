@@ -1,6 +1,7 @@
 import streamlit as st
 
 st.title("Discussion")
+st.write("This section discusses the results of the regression models' run.")
 
 # Discussion: ___________________________________________________________________________
 
@@ -42,6 +43,7 @@ with st.container(border = True):
 st.divider()
 
 st.header("Conclusion")
+st.write("This section reiterates and established what was found and could be improved.")
 
 col_findings, col_interpretation = st.columns(2)
 
