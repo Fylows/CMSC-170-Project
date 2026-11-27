@@ -9,7 +9,13 @@ st.divider()
 
 st.header("Sources")
 
-col_reg_sources, col_metric_sources, col_frontend_sources = st.columns(3)
+col_dataset_source, col_reg_sources = st.columns(2)
+col_metric_sources, col_frontend_sources = st.columns(2)
+
+with col_dataset_source.container(border = True):
+    st.subheader("Dataset")
+
+    st.write("Department of Energy. (2023). *Power Generation by Fuel Source, 1990-2020* [Data set]. https://data.gov.ph/index/public/dataset/Power%20Generation%20by%20Fuel%20Source,%201990-2020/mhb14dc0-8tio-af0u-6nac-euxrn6bz48rm")
 
 with col_reg_sources.container(border = True):
     st.subheader("Regression Models")
@@ -32,6 +38,19 @@ with col_frontend_sources.container(border = True):
     st.write("*Create an app - Streamlit Docs*. (n.d.). https://docs.streamlit.io/get-started/tutorials/create-an-app")
     st.write("*st.pyplot - Streamlit docs*. (n.d.). https://docs.streamlit.io/develop/api-reference/charts/st.pyplot")
     st.write("*Streamlit API cheat sheet - Streamlit Docs*. (n.d.). https://docs.streamlit.io/develop/quick-reference/cheat-sheet")
+
+# AI Declaration: _______________________________________________________________________
+
+st.divider()
+
+st.header("AI Declaration")
+
+with st.container(border = True):
+    st.subheader("Notice of AI Tools Usage")
+
+    st.write("**AI tools** have been used in this project for the purpose of **debugging** the regression models and **ensuring consistency** " \
+    "within the user interface (alongside the cited Streamlit cheatsheet above). The content has been **reviewed** to ensure that the final" \
+    "output is **original** and as **accurate** as possible.")
 
 # _______________________________________________________________________________________
 
