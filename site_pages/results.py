@@ -60,7 +60,7 @@ with tab_training:
     flex.bar_chart({m: {"MAE": v["mae"], "RMSE": v["rmse"]} for m, v in train_overall.items()}, stack=False)
     flex.bar_chart({m: {"MAPE": v["mape"]} for m, v in train_overall.items()}, stack=False)
 
-    st.header(f"{model_name} Regression Model per Fuel source Metrics")
+    st.header(f"{model_name} Regression Model per Fuel Source Metrics")
     fuel_options = [f for f in fuel_sources if f != "Grand Total"]
     fuel_name = st.pills("Choose a fuel source:", fuel_options, default=fuel_options[0], key="model_select_fuel_2")
 
